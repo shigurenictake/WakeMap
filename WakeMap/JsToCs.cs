@@ -24,7 +24,7 @@ namespace WakeMap
         public void WindowOpen(string url)
         {
             string fimeneme = System.IO.Path.GetFileName(url);
-        
+
             switch (fimeneme)
             {
                 case "subPatternA.html":
@@ -36,6 +36,26 @@ namespace WakeMap
                 default:
                     break;
             }
+        }
+
+        //航跡を初期化
+        public void InitWake(
+            string scene,
+            string strDictAWake,
+            string strDictBWake,
+            string strDictCPlace,
+            string strDictDTrack,
+            string strDictEArrow
+            )
+        {
+            refWakeController.InitWake(
+                scene,
+                strDictAWake,
+                strDictBWake,
+                strDictCPlace,
+                strDictDTrack,
+                strDictEArrow
+                );
         }
     }
 }

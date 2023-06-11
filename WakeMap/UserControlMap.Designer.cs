@@ -80,6 +80,9 @@
             this.mapBox.TabIndex = 0;
             this.mapBox.Text = "mapBox1";
             this.mapBox.WheelZoomMagnitude = -2D;
+            this.mapBox.MouseMove += new SharpMap.Forms.MapBox.MouseEventHandler(this.mapBox_MouseMove);
+            this.mapBox.MouseDown += new SharpMap.Forms.MapBox.MouseEventHandler(this.mapBox_MouseDown);
+            this.mapBox.Click += new System.EventHandler(this.mapBox_Click);
             // 
             // pictureBoxLegend
             // 
@@ -108,7 +111,7 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainerUD;
-        private SharpMap.Forms.MapBox mapBox;
         private System.Windows.Forms.PictureBox pictureBoxLegend;
+        public SharpMap.Forms.MapBox mapBox;
     }
 }

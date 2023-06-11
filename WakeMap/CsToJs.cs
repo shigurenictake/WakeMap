@@ -58,6 +58,9 @@ namespace WakeMap
             //詳細へボタンの非表示
             js.AppendLine("document.getElementById('btn-godetail').style.display='none';");
             await webView.ExecuteScriptAsync(js.ToString());
+
+            await webView.ExecuteScriptAsync("InitWake();");
+
         }
 
         //詳細へボタンをクリックする
