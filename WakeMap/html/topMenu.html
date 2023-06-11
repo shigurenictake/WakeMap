@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <title>トップメニュー</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link rel="stylesheet" href="common.css">
+    <script language="javascript" type="text/javascript" src="common.js"></script>
+</head>
+<body>
+    <p><b>トップメニュー(topMenu.html)</b></p>
+    <div>
+        <button id="btn-close" onclick="closeWindow()">htmlから閉じる</button>
+        <div>window.closeする(ウィンドウを閉じる) メインウィンドウでは機能しない</div>
+    </div>
+    <br>
+    <div>
+        <button id="btn-new-win-a" onclick="openNewWindow('./subPatternA.html')">サブウィンドウ(A)</button>
+        <button id="btn-new-win-b" onclick="openNewWindow('./subPatternB.html')">サブウィンドウ(B)</button>
+        <div>
+            htmlのみの時とC#/WebView2使用時で開き方を分岐。<br>
+            C#/WebView2では新しいフォーム(ウィンドウ)でページを開く。
+        </div>
+    </div>
+    <br>
+    <div>
+        <button id="btn-self-win-a" onclick="windowOpenSelf('./patternA.html')">htmlでURL切り替え(A)</button>
+        <button id="btn-self-win-b" onclick="windowOpenSelf('./patternB.html')">htmlでURL切り替え(B)</button>
+        <div>htmlからwindow.openする</div>
+    </div>
+    <br>
+    <div id="CsToJs" class="div-1">
+        <p><b>◆C#から受け取った文字列＞</b></p>
+    </div>
+    <br>
+    <div id="JsToCs" class="div-2">
+        <p><b>◆JavaScriptからC#へ送信＞</b></p>
+        <input type="text" id="sendtext">
+        <input type="button" value='▼送信' onclick="ButtonClick_JsToCs();">
+    </div>
+    <br>
+</body>
+</html>

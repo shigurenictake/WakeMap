@@ -10,9 +10,11 @@ using System.Windows.Forms;
 
 namespace WakeMap
 {
-    public partial class Form1 : Form
+     public partial class UserControlMap : UserControl
     {
-        public Form1()
+        public WakeController refWakeController;
+
+        public UserControlMap()
         {
             InitializeComponent();
         }
