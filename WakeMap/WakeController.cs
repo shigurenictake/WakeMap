@@ -501,39 +501,41 @@ namespace WakeMap
                         if (isHit) { break; }
                     }
 
-                    //===== 描画 =====
-                    //レイヤ取得(参照)
-                    VectorLayer layer = refUserControlMap.sharpMapHelper.GetVectorLayerByName(refUserControlMap.mapBox, "laySelectAWake");
-                    //ジオメトリ取得
-                    //Collection<IGeometry> igeoms = refUserControlMap.sharpMapHelper.GetIGeometrysAll(layer);
-                    //空のジオメトリ生成
-                    Collection<IGeometry> igeoms = new Collection<IGeometry>();
-
-                    //図形生成クラス
-                    GeometryFactory gf = new GeometryFactory();
-
-                    //座標リストを作成
-                    List<Coordinate> listCoordinate2 = new List<Coordinate>();
-                    foreach (var pos in g_dictSelectAWake)
+                    if (g_dictSelectAWake != null)
                     {
-                        Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
-                        listCoordinate2.Add(coordinate);
+                        //===== 描画 =====
+                        //レイヤ取得(参照)
+                        VectorLayer layer = refUserControlMap.sharpMapHelper.GetVectorLayerByName(refUserControlMap.mapBox, "laySelectAWake");
+                        //ジオメトリ取得
+                        //Collection<IGeometry> igeoms = refUserControlMap.sharpMapHelper.GetIGeometrysAll(layer);
+                        //空のジオメトリ生成
+                        Collection<IGeometry> igeoms = new Collection<IGeometry>();
+
+                        //図形生成クラス
+                        GeometryFactory gf = new GeometryFactory();
+
+                        //座標リストを作成
+                        List<Coordinate> listCoordinate2 = new List<Coordinate>();
+                        foreach (var pos in g_dictSelectAWake)
+                        {
+                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            listCoordinate2.Add(coordinate);
+                        }
+                        //配列に変換
+                        Coordinate[] coordinates = listCoordinate2.ToArray();
+                        //線をジオメトリに追加
+                        igeoms.Add(gf.CreateLineString(coordinates));
+
+                        //ジオメトリをレイヤに反映
+                        GeometryProvider gpro = new GeometryProvider(igeoms);
+                        layer.DataSource = gpro;
+                        //レイヤのインデックスを取得
+                        int index = refUserControlMap.mapBox.Map.Layers.IndexOf(layer);
+                        //レイヤを更新
+                        refUserControlMap.mapBox.Map.Layers[index] = layer;
+                        //mapBoxを再描画
+                        refUserControlMap.mapBox.Refresh();
                     }
-                    //配列に変換
-                    Coordinate[] coordinates = listCoordinate2.ToArray();
-                    //線をジオメトリに追加
-                    igeoms.Add(gf.CreateLineString(coordinates));
-
-                    //ジオメトリをレイヤに反映
-                    GeometryProvider gpro = new GeometryProvider(igeoms);
-                    layer.DataSource = gpro;
-                    //レイヤのインデックスを取得
-                    int index = refUserControlMap.mapBox.Map.Layers.IndexOf(layer);
-                    //レイヤを更新
-                    refUserControlMap.mapBox.Map.Layers[index] = layer;
-                    //mapBoxを再描画
-                    refUserControlMap.mapBox.Refresh();
-
                     break;
                 case Scene.SceneB:
                     //BWake
@@ -569,19 +571,32 @@ namespace WakeMap
             int xC = point.X;
             int yC = point.Y;
 
-            int numerator = (xB - xA) * (xC - xA) + (yB - yA) * (yC - yA);
-            int denominator = (xB - xA) * (xB - xA) + (yB - yA) * (yB - yA);
-            float t = (float)numerator / (float)denominator;
+            //int numerator = (xB - xA) * (xC - xA) + (yB - yA) * (yC - yA);
+            //int denominator = (xB - xA) * (xB - xA) + (yB - yA) * (yB - yA);
+            //float t = (float)numerator / (float)denominator;
+            //
+            //float xIntersection = xA + t * (xB - xA);
+            //float yIntersection = yA + t * (yB - yA);
+            //
+            //float distance = (float)Math.Sqrt(
+            //    ((float)xC - xIntersection) * ((float)xC - xIntersection) + 
+            //    ((float)yC - yIntersection) * ((float)yC - yIntersection)
+            //    );
 
-            float xIntersection = xA + t * (xB - xA);
-            float yIntersection = yA + t * (yB - yA);
+            //線分ABの長さ
+            double segmentLength = Math.Sqrt((xB - xA) * (xB - xA) + (yB - yA) * (yB - yA));
 
-            float distance = (float)Math.Sqrt(
-                ((float)xC - xIntersection) * ((float)xC - xIntersection) + 
-                ((float)yC - yIntersection) * ((float)yC - yIntersection)
-                );
+            //点Cから直線ABに垂直に下ろした垂線の距離 ( 無限に延びる直線とみなされる場合の距離を計算している )
+            double numerator = Math.Abs((xB - xA) * (yA - yC) - (xA - xC) * (yB - yA));
+            double distance = numerator / segmentLength;
 
-            return (int)distance;
+            //点Cが線分ABの範囲外にある場合、最短距離は点Aまたは点Bからの距離となる。
+            //その場合、点Cから点Aまたは点Bまでの距離を計算して、最小値を取る。
+            double distanceToA = Math.Sqrt((xC - xA) * (xC - xA) + (yC - yA) * (yC - yA)); //点Aとの距離
+            double distanceToB = Math.Sqrt((xC - xB) * (xC - xB) + (yC - yB) * (yC - yB)); //点Bとの距離
+            double minimumDistance = Math.Min(distance, Math.Min(distanceToA, distanceToB));
+
+            return (int)minimumDistance;
         }
 
         //==============================================
