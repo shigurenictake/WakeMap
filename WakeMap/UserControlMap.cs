@@ -26,7 +26,7 @@ namespace WakeMap
         public WakeController refWakeController;
 
         //SharpMap補助クラス
-        SharpMapHelper sharpMapHelper = new SharpMapHelper();
+        public SharpMapHelper sharpMapHelper = new SharpMapHelper();
 
         //クラス変数
         public Coordinate g_worldPos = new Coordinate();                       //地理座標
@@ -271,9 +271,12 @@ namespace WakeMap
         //    //    g_selectedGeomPrev = g_selectedGeom;
         //    //}
         //}
+        
+        ////イベント - 地図上でクリック(ボタンを離した瞬間)
+
         private void mapBox_Click(object sender, EventArgs e)
         {
-
+            refWakeController.mapBox_Click(g_imagePos);
         }
 
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace WakeMap
 {
-    internal class SharpMapHelper
+    public class SharpMapHelper
     {
 
         /// <summary>

@@ -2,9 +2,14 @@
 using GeoAPI.Geometries;
 using NetTopologySuite.Algorithm;
 using NetTopologySuite.Algorithm.Distance;
+using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
+using SharpMap.Data.Providers;
+using SharpMap.Forms;
+using SharpMap.Layers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -28,22 +33,18 @@ namespace WakeMap
         private Scene g_scene;
 
         //ディクショナリー
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictAWake = new Dictionary<string, Dictionary<string, Dictionary<string, double>>>();
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictBWake = new Dictionary<string, Dictionary<string, Dictionary<string, double>>>();
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictCPlace = new Dictionary<string, Dictionary<string, Dictionary<string, double>>>();
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictDTrack = new Dictionary<string, Dictionary<string, Dictionary<string, double>>>();
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictEArrow = new Dictionary<string, Dictionary<string, Dictionary<string, double>>>();
+        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictAWake;
+        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictBWake;
+        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictCPlace;
+        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictDTrack;
+        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictEArrow;
 
-        //ラベルリスト
-        public struct WakeLabel
-        {
-            public Label label;
-            public Coordinate worldPos;
-        }
-        private List<WakeLabel> g_labelListAWake = new List<WakeLabel>();
-        private List<WakeLabel> g_labelListBWake = new List<WakeLabel>();
-        private List<WakeLabel> g_labelListDTrack = new List<WakeLabel>();
-        private List<WakeLabel> g_labelListDummy = new List<WakeLabel>();
+        //ディクショナリー(選択用)
+        private Dictionary<string, Dictionary<string, double>> g_dictSelectAWake;
+        private Dictionary<string, Dictionary<string, double>> g_dictSelectBWake;
+        private Dictionary<string, Dictionary<string, double>> g_dictSelectCPlac;
+        private Dictionary<string, Dictionary<string, double>> g_dictSelectDTrack;
+        private Dictionary<string, Dictionary<string, double>> g_dictSelectEArrow;
 
         //航跡のコンフィグ
         public struct WakeCongfig {
@@ -65,6 +66,19 @@ namespace WakeMap
         private WakeCongfig g_cfgCPlace = new WakeCongfig();
         private WakeCongfig g_cfgDTrack = new WakeCongfig();
         private WakeCongfig g_cfgEArrow = new WakeCongfig();
+        //選択用
+        private WakeCongfig g_cfgSelectAWake = new WakeCongfig();
+
+        //ラベルリスト
+        public struct WakeLabel
+        {
+            public Label label;
+            public Coordinate worldPos;
+        }
+        private List<WakeLabel> g_labelListAWake = new List<WakeLabel>();
+        private List<WakeLabel> g_labelListBWake = new List<WakeLabel>();
+        private List<WakeLabel> g_labelListDTrack = new List<WakeLabel>();
+        private List<WakeLabel> g_labelListDummy = new List<WakeLabel>();
 
         /// <summary>
         /// 初期化
@@ -137,6 +151,10 @@ namespace WakeMap
                 case Scene.SceneA:
                     //Mapに描画する
                     DrawWake(ref g_dictAWake, ref g_labelListAWake, ref g_cfgAWake, "layAWake");
+
+                    refUserControlMap.GenerateLayer("laySelectAWake");
+                    refUserControlMap.SetStyleLineToLayer("laySelectAWake", g_cfgSelectAWake.lineColor, g_cfgSelectAWake.lineWidth);
+
                     break;
                 case Scene.SceneB:
                     //Mapに描画する
@@ -221,6 +239,18 @@ namespace WakeMap
             g_cfgEArrow.isLabel = false;
             g_cfgEArrow.labelBackColor = System.Drawing.Color.Empty;
             g_cfgEArrow.labelForeColor = System.Drawing.Color.Empty;
+
+            g_cfgSelectAWake.isPoint = false;
+            g_cfgSelectAWake.pointColor = System.Drawing.Brushes.White;
+            g_cfgSelectAWake.pointSize = 0;
+            g_cfgSelectAWake.isLine = true;
+            g_cfgSelectAWake.lineColor = System.Drawing.Color.DarkRed;
+            g_cfgSelectAWake.lineWidth = 2;
+            g_cfgSelectAWake.isLineDash = false;
+            g_cfgSelectAWake.isLineArrow = false;
+            g_cfgSelectAWake.isLabel = false;
+            g_cfgSelectAWake.labelBackColor= System.Drawing.Color.Empty;
+            g_cfgSelectAWake.labelForeColor= System.Drawing.Color.Empty;
         }
 
         //辞書を生成する
@@ -430,8 +460,107 @@ namespace WakeMap
 
         //==============================================
 
+        //
+        public void mapBox_Click(System.Drawing.Point clickPos)
+        {
+            //クリック座標(イメージ座標)を取得
+            //clickPos
+
+            bool isHit;
+
+            //当たり判定
+            switch (g_scene)
+            {
+                case Scene.SceneA:
+                    //AWake g_dictAWake
+                    isHit = false;
+                    //foreach (var wake in refDictWake)
+                    foreach (var wake in g_dictAWake)
+                        {
+                        //座標リストを作成
+                        List<Coordinate> listCoordinate = new List<Coordinate>();
+                        foreach (var pos in wake.Value)
+                        {
+                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            listCoordinate.Add(coordinate);
+                        }
+                        //当たり判定
+                        for(int i = 1;i< listCoordinate.Count; i++)
+                        {
+                            System.Drawing.Point start = refUserControlMap.TransPosWorldToImage(listCoordinate[i - 1]);
+                            System.Drawing.Point end = refUserControlMap.TransPosWorldToImage(listCoordinate[i]);
+                            int distance = DistancePointToLine(start, end, clickPos);
+                            //判定 #ピクセル
+                            if(distance < 5)
+                            {
+                                g_dictSelectAWake = wake.Value;
+                                isHit = true;
+                                break;
+                            }
+                        }
+                        if (isHit) { break; }
+                    }
+
+                    //===== 描画 =====
+                    //レイヤ取得(参照)
+                    VectorLayer layer = refUserControlMap.sharpMapHelper.GetVectorLayerByName(refUserControlMap.mapBox, "laySelectAWake");
+                    //ジオメトリ取得
+                    //Collection<IGeometry> igeoms = refUserControlMap.sharpMapHelper.GetIGeometrysAll(layer);
+                    //空のジオメトリ生成
+                    Collection<IGeometry> igeoms = new Collection<IGeometry>();
+
+                    //図形生成クラス
+                    GeometryFactory gf = new GeometryFactory();
+
+                    //座標リストを作成
+                    List<Coordinate> listCoordinate2 = new List<Coordinate>();
+                    foreach (var pos in g_dictSelectAWake)
+                    {
+                        Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                        listCoordinate2.Add(coordinate);
+                    }
+                    //配列に変換
+                    Coordinate[] coordinates = listCoordinate2.ToArray();
+                    //線をジオメトリに追加
+                    igeoms.Add(gf.CreateLineString(coordinates));
+
+                    //ジオメトリをレイヤに反映
+                    GeometryProvider gpro = new GeometryProvider(igeoms);
+                    layer.DataSource = gpro;
+                    //レイヤのインデックスを取得
+                    int index = refUserControlMap.mapBox.Map.Layers.IndexOf(layer);
+                    //レイヤを更新
+                    refUserControlMap.mapBox.Map.Layers[index] = layer;
+                    //mapBoxを再描画
+                    refUserControlMap.mapBox.Refresh();
+
+                    break;
+                case Scene.SceneB:
+                    //BWake
+                    //CPlace
+                    //DTrack
+                    break;
+                case Scene.SceneC:
+                    //CPlace
+                    //DTrack
+                    //EArrow
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+
+
+        //==============================================
+
         //線分と点の距離計算
-        private int DistancePointToLine(System.Drawing.Point start, System.Drawing.Point end, System.Drawing.Point point)
+        private int DistancePointToLine(
+            System.Drawing.Point start, 
+            System.Drawing.Point end, 
+            System.Drawing.Point point
+            )
         {
             int xA = start.X;
             int yA = start.Y;

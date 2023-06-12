@@ -57,9 +57,9 @@ function buttonClickGoDetail() {
 
 //航跡初期化
 function InitWake() {
-    //var scene = "SceneA";
+    var scene = "SceneA";
     //var scene = "SceneB";
-    var scene = "SceneC";
+    //var scene = "SceneC";
 
     //JSON文字列
     //AWake
