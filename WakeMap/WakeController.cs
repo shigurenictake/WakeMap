@@ -1,12 +1,15 @@
-﻿using GeoAPI.Geometries;
+﻿using GeoAPI.CoordinateSystems;
+using GeoAPI.Geometries;
 using NetTopologySuite.Algorithm;
 using NetTopologySuite.Algorithm.Distance;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -45,14 +48,17 @@ namespace WakeMap
         //航跡のコンフィグ
         public struct WakeCongfig {
             public bool isPoint; //ポイント描画の有無
-            public System.Drawing.Color pointColor; //ポイント色
+            public System.Drawing.Brush pointColor; //ポイント色
             public float pointSize; //ポイントサイズ
             public bool isLine; //ライン描画の有無
             public System.Drawing.Color lineColor; //ライン色
             public float lineWidth; //ラインの太さ
             public bool isLineDash; //ラインを破線にするかどうか
             public bool isLineArrow; //ラインを破線にするかどうか
-            public bool isLabel; //ライン描画の有無
+            public bool isLabel; //ラベル描画の有無
+            public System.Drawing.Color labelBackColor; //ラベル背景色
+            public System.Drawing.Color labelForeColor; //ラベル背景色
+
         }
         private WakeCongfig g_cfgAWake = new WakeCongfig();
         private WakeCongfig g_cfgBWake = new WakeCongfig();
@@ -145,7 +151,7 @@ namespace WakeMap
                     DrawWake(ref g_dictBWake, ref g_labelListBWake, ref g_cfgBWake, "layBWake");
                     DrawWake(ref g_dictCPlace, ref g_labelListDummy, ref g_cfgCPlace, "layCPlace");
                     DrawWake(ref g_dictDTrack, ref g_labelListDTrack, ref g_cfgDTrack, "layDTrack");
-                    DrawEArrow(ref g_dictEArrow, g_labelListDummy, g_cfgEArrow);
+                    DrawEArrow(ref g_dictEArrow, ref g_cfgEArrow, "EArrow");
                     break;
                 default:
                     break;
@@ -157,120 +163,114 @@ namespace WakeMap
         private void InitWakeConfig()
         {
             g_cfgAWake.isPoint = false;
-            g_cfgAWake.pointColor = System.Drawing.Color.Empty;
+            g_cfgAWake.pointColor = System.Drawing.Brushes.White;
             g_cfgAWake.pointSize = 0;
             g_cfgAWake.isLine = true;
             g_cfgAWake.lineColor = System.Drawing.Color.DarkRed;
             g_cfgAWake.lineWidth = 1;
             g_cfgAWake.isLineDash = true;
             g_cfgAWake.isLineArrow = true;
-            g_cfgAWake.isLabel = false;
+            g_cfgAWake.isLabel = true;
+            g_cfgAWake.labelBackColor= System.Drawing.Color.Coral;
+            g_cfgAWake.labelForeColor= System.Drawing.Color.Black;
 
             g_cfgBWake.isPoint = false;
-            g_cfgBWake.pointColor = System.Drawing.Color.Empty;
+            g_cfgBWake.pointColor = System.Drawing.Brushes.White;
             g_cfgBWake.pointSize = 0;
             g_cfgBWake.isLine = true;
             g_cfgBWake.lineColor = System.Drawing.Color.Orange;
             g_cfgBWake.lineWidth = 1;
             g_cfgBWake.isLineDash = true;
             g_cfgBWake.isLineArrow = true;
-            g_cfgBWake.isLabel = false;
+            g_cfgBWake.isLabel = true;
+            g_cfgBWake.labelBackColor = System.Drawing.Color.Yellow;
+            g_cfgBWake.labelForeColor = System.Drawing.Color.Black;
 
             g_cfgCPlace.isPoint = true;
-            g_cfgCPlace.pointColor = System.Drawing.Color.LightBlue;
-            g_cfgCPlace.pointSize = 3;
+            g_cfgCPlace.pointColor = System.Drawing.Brushes.Aqua;
+            g_cfgCPlace.pointSize = 5;
             g_cfgCPlace.isLine = false;
             g_cfgCPlace.lineColor = System.Drawing.Color.Empty;
             g_cfgCPlace.lineWidth = 0;
             g_cfgCPlace.isLineDash = false;
             g_cfgCPlace.isLineArrow = false;
             g_cfgCPlace.isLabel = false;
+            g_cfgCPlace.labelBackColor = System.Drawing.Color.Empty;
+            g_cfgCPlace.labelForeColor = System.Drawing.Color.Empty;
 
             g_cfgDTrack.isPoint = false;
-            g_cfgDTrack.pointColor = System.Drawing.Color.Empty;
+            g_cfgDTrack.pointColor = System.Drawing.Brushes.White;
             g_cfgDTrack.pointSize = 0;
             g_cfgDTrack.isLine = true;
             g_cfgDTrack.lineColor = System.Drawing.Color.Green;
             g_cfgDTrack.lineWidth = 1;
             g_cfgDTrack.isLineDash = true;
             g_cfgDTrack.isLineArrow = true;
-            g_cfgDTrack.isLabel = false;
+            g_cfgDTrack.isLabel = true;
+            g_cfgDTrack.labelBackColor = System.Drawing.Color.LightGreen;
+            g_cfgDTrack.labelForeColor = System.Drawing.Color.Black;
 
             g_cfgEArrow.isPoint = false;
-            g_cfgEArrow.pointColor = System.Drawing.Color.Empty;
+            g_cfgEArrow.pointColor = System.Drawing.Brushes.White;
             g_cfgEArrow.pointSize = 0;
             g_cfgEArrow.isLine = true;
-            g_cfgEArrow.lineColor = System.Drawing.Color.LightBlue;
+            g_cfgEArrow.lineColor = System.Drawing.Color.Aqua;
             g_cfgEArrow.lineWidth = 1;
             g_cfgEArrow.isLineDash = true;
             g_cfgEArrow.isLineArrow = true;
             g_cfgEArrow.isLabel = false;
+            g_cfgEArrow.labelBackColor = System.Drawing.Color.Empty;
+            g_cfgEArrow.labelForeColor = System.Drawing.Color.Empty;
         }
-
 
         //辞書を生成する
         private void GenerateWakeDictionary(
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> dictWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
             string strDictWake
         ) {
-            // 文字列の空白文字を削除する
-            //strWakeList = System.Text.RegularExpressions.Regex.Replace(strWakeList, @"[\s]+", "");
             //JSON文字列をデシリアライズして、 Dictionary<string, Dictionary<string, Dictionary<string, double>>> 型のオブジェクトに格納
-            dictWake = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<string, double>>>>(strDictWake);
-
-            //foreach (var wake in dictWake)
-            //{
-            //    Console.WriteLine("■" + wake.Key);
-            //    foreach (var pos in wake.Value)
-            //    {
-            //        Console.Write($"　{pos.Key} : ");
-            //        Console.Write($"( {pos.Value["x"]} , ");
-            //        Console.Write($"{pos.Value["y"]} )\n");
-            //    }
-            //    Console.WriteLine();
-            //}
+            refDictWake = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<string, double>>>>(strDictWake);
         }
 
         //描画する
         private void DrawWake(
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> dictWake,
-            ref List<WakeLabel> wakeLabelList,
-            ref WakeCongfig wakeCongfig,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref List<WakeLabel> refWakeLabelList,
+            ref WakeCongfig refWakeCongfig,
             string layername
             )
         {
             //レイヤを生成
             refUserControlMap.GenerateLayer(layername);
 
-            if (dictWake == null)
+            if (refDictWake == null)
             {
                 return;
             }
 
             //点を追加
-            if (wakeCongfig.isPoint)
+            if (refWakeCongfig.isPoint)
             {
                 //wakeを取得
-                foreach (var wake in dictWake)
+                foreach (var wake in refDictWake)
                 {
                     //座標を取得
                     foreach (var pos in wake.Value)
                     {
                         Coordinate wpos = new Coordinate(pos.Value["x"], pos.Value["y"]);
                         refUserControlMap.AddPointToLayer(layername, wpos);
-                        //点を線で結ぶ
-                        //refUserControlMap.AddLineConnectLast2PointsToLayer(layername);
+                        refUserControlMap.SetStylePointToLayer(layername, refWakeCongfig.pointColor, refWakeCongfig.pointSize);
                     }
                 }
             }
 
             //線を追加
-            if (wakeCongfig.isLine)
+            if (refWakeCongfig.isLine)
             {
                 //wakeを取得
-                foreach (var wake in dictWake)
+                foreach (var wake in refDictWake)
                 {
-                    //座標リストを取得
+                    //座標リストを作成
                     List<Coordinate> listCoordinate = new List<Coordinate>();
                     foreach (var pos in wake.Value)
                     {
@@ -282,40 +282,25 @@ namespace WakeMap
                     //レイヤーにラインを追加
                     refUserControlMap.AddLineToLayer(layername, coordinates);
                     //スタイルを設定
-                    refUserControlMap.SetStyleLineToLayer(layername, wakeCongfig.lineColor, wakeCongfig.lineWidth);
+                    refUserControlMap.SetStyleLineToLayer(layername, refWakeCongfig.lineColor, refWakeCongfig.lineWidth);
                     //破線を設定
-                    if (wakeCongfig.isLineDash)
+                    if (refWakeCongfig.isLineDash)
                     {
                         refUserControlMap.SetLineDash(layername);
                     }
                     //矢印を設定
-                    if (wakeCongfig.isLineArrow)
+                    if (refWakeCongfig.isLineArrow)
                     {
                         refUserControlMap.SetLineArrow(layername);
                     }
-
-                    ////終点に▲(矢印の代わり)を描画
-                    ////考え中・・・
-                    //double angle = GetAngle(coordinates[coordinates.Count() - 2], coordinates[coordinates.Count() - 1]); //角度
-                    ////終点を基準に▲を描画
-                    //refUserControlMap.AddTriangleToLayer(layername, coordinates[coordinates.Count() - 1]);
                 }
             }
 
-            ////角度を取得
-            //double GetAngle(Coordinate start, Coordinate target)
-            //{
-            //    Coordinate dt = new Coordinate( target.X - start.X, target.Y - start.Y);
-            //    double rad = Math.Atan2(dt.Y, dt.X);
-            //    double angle = rad * 180 / Math.PI;
-            //    return angle;
-            //}
-
             //ラベルを描画
-            if (wakeCongfig.isLabel)
+            if (refWakeCongfig.isLabel)
             {
                 //wakeを取得
-                foreach (var wake in dictWake)
+                foreach (var wake in refDictWake)
                 {
                     foreach (var pos in wake.Value)
                     {
@@ -323,22 +308,89 @@ namespace WakeMap
                         if (pos.Key == "pos1")
                         {
                             Coordinate wpos = new Coordinate(pos.Value["x"], pos.Value["y"]);
-                            //ラベル名はwake.Keyの4文字目以降を切り出し
-                            GenerateLabel(wpos, wake.Key.Substring(4));
+                            //ラベル生成
+                            GenerateLabel(ref refWakeLabelList,
+                                wpos,
+                                Regex.Replace(wake.Key, @"[^0-9]", ""),
+                                refWakeCongfig.labelBackColor,
+                                refWakeCongfig.labelForeColor);
+                            break;
                         }
                     }
                 }
             }
 
-            Console.WriteLine();
             refUserControlMap.MapBoxRefresh();
         }
 
-        //==============================================
+        // EArrow用描画処理
+        private void DrawEArrow(
+            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref WakeCongfig refWakeCongfig,
+            string layername
+            )
+        {
+            //矢印の描画
+            //レイヤを生成
+            refUserControlMap.GenerateLayer(layername);
 
+            if (refDictWake == null)
+            {
+                return;
+            }
+
+            //線を追加
+            if (refWakeCongfig.isLine)
+            {
+                //wakeを取得
+                foreach (var wake in refDictWake)
+                {
+                    foreach (var info in wake.Value)
+                    {
+                        //開始点の取得
+                        Coordinate start = new Coordinate(info.Value["x"], info.Value["y"]);
+                        //方位の取得
+                        float direction = (float)info.Value["direction"];
+                        //距離の取得
+                        float distance = (float)info.Value["distance"];
+                        //終点の算出
+                        double radian = direction * Math.PI / 180.0;
+                        double xStart = start.X;
+                        double yStart = start.Y;
+                        double x = xStart + distance * Math.Cos(radian);
+                        double y = yStart + distance * Math.Sin(radian);
+                        Coordinate end = new Coordinate(x, y);
+                        //配列を作成
+                        Coordinate[] coordinates = new Coordinate[2]{ start, end };
+                        //レイヤーにラインを追加
+                        refUserControlMap.AddLineToLayer(layername, coordinates);
+                    }
+                    //スタイルを設定
+                    refUserControlMap.SetStyleLineToLayer(layername, refWakeCongfig.lineColor, refWakeCongfig.lineWidth);
+                    //破線を設定
+                    if (refWakeCongfig.isLineDash)
+                    {
+                        refUserControlMap.SetLineDash(layername);
+                    }
+                    //矢印を設定
+                    if (refWakeCongfig.isLineArrow)
+                    {
+                        refUserControlMap.SetLineArrow(layername);
+                    }
+                }
+            }
+
+            refUserControlMap.MapBoxRefresh();
+        }
 
         //ラベル生成
-        private void GenerateLabel(Coordinate worldPos, string text)
+        private void GenerateLabel(
+            ref List<WakeLabel> refListWakeLabel,
+            Coordinate worldPos,
+            string text,
+            System.Drawing.Color BackColor,
+            System.Drawing.Color ForeColor
+            )
         {
             //新しいラベルを生成
             Label newLabel = new Label();
@@ -346,9 +398,8 @@ namespace WakeMap
             newLabel.AutoSize = true;
             //配置
             newLabel.Location = refUserControlMap.TransPosWorldToImage(worldPos);
-            //newLabel.Parent = refForm1.mapBox1; //親を設定
-            //newLabel.BackColor = System.Drawing.Color.Transparent;//背景を透過
-            //newLabel.Name = labelName; //識別名
+            newLabel.BackColor = BackColor;
+            newLabel.ForeColor = ForeColor;
             //コントロールに追加
             refUserControlMap.mapBox.Controls.Add(newLabel);
         
@@ -356,16 +407,7 @@ namespace WakeMap
             WakeLabel wakeLabel = new WakeLabel();
             wakeLabel.label = newLabel;
             wakeLabel.worldPos = worldPos;
-            g_labelListAWake.Add(wakeLabel);
-        }
-
-        // EArrow用描画処理
-        private void DrawEArrow(
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> dictWake,
-            List<WakeLabel> wakeLabelList,
-            WakeCongfig wakeCongfig
-            )
-        {
+            refListWakeLabel.Add(wakeLabel);
         }
 
         // ラベルをmapboxに合わせて再配置
@@ -373,6 +415,14 @@ namespace WakeMap
         {
             //Console.WriteLine("RelocateLabel");
             foreach (WakeLabel wakeLabel in g_labelListAWake)
+            {
+                wakeLabel.label.Location = refUserControlMap.TransPosWorldToImage(wakeLabel.worldPos);
+            }
+            foreach (WakeLabel wakeLabel in g_labelListBWake)
+            {
+                wakeLabel.label.Location = refUserControlMap.TransPosWorldToImage(wakeLabel.worldPos);
+            }
+            foreach (WakeLabel wakeLabel in g_labelListDTrack)
             {
                 wakeLabel.label.Location = refUserControlMap.TransPosWorldToImage(wakeLabel.worldPos);
             }

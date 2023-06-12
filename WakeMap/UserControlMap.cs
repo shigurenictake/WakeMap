@@ -192,12 +192,14 @@ namespace WakeMap
         }
 
         //レイヤのポイントの色を設定
-        public void SetPointColorToLayer(string layername)
+        public void SetStylePointToLayer(string layername , System.Drawing.Brush color , float size )
         {
             //レイヤ取得(参照)
             VectorLayer layer = sharpMapHelper.GetVectorLayerByName(mapBox, layername);
             //ポイントの色を設定
-            layer.Style.PointColor = Brushes.Red;
+            layer.Style.PointColor = color;
+            layer.Style.PointSize = size;
+
             //レイヤを更新
             //int index = mapBox.Map.Layers.IndexOf(layer);
             //mapBox.Map.Layers[index] = layer;
@@ -482,7 +484,7 @@ namespace WakeMap
             VectorLayer layer = sharpMapHelper.GetVectorLayerByName(mapBox, layername);
 
             //破線にする { 破線の長さ, 間隔 }
-            layer.Style.Line.DashPattern = new float[] { 5.0F, 5.0F };
+            layer.Style.Line.DashPattern = new float[] { 3.0F, 3.0F };
         }
 
         //レイヤの線を矢印にする
@@ -500,68 +502,6 @@ namespace WakeMap
         {
             mapBox.Refresh();
         }
-
-        ////三角形を追加 考え中・・・
-        //public void AddTriangleToLayer(string layername, Coordinate coordinate)
-        //{
-        //    //レイヤ取得(参照)
-        //    VectorLayer layer = sharpMapHelper.GetVectorLayerByName(mapBox, layername);
-        //    //ジオメトリ取得
-        //    Collection<IGeometry> igeoms = sharpMapHelper.GetIGeometrysAll(layer);
-        //    //点をジオメトリに追加
-        //    GeometryFactory gf = new GeometryFactory();
-        //
-        //    // 多角形塗りつぶし
-        //    var poly = gf.CreatePolygon(new Coordinate[] {
-        //         new Coordinate(coordinate),
-        //         new Coordinate(coordinate.X+0.5, coordinate.Y-0.5),
-        //         new Coordinate(coordinate.X-0.5, coordinate.Y-0.5),
-        //         new Coordinate(coordinate)
-        //    });
-        //    igeoms.Add(poly);
-        //
-        //    //ジオメトリをレイヤに反映
-        //    GeometryProvider gpro = new GeometryProvider(igeoms);
-        //    layer.DataSource = gpro;
-        //
-        //    //レイヤのインデックスを取得
-        //    int index = mapBox.Map.Layers.IndexOf(layer);
-        //    //レイヤを更新
-        //    mapBox.Map.Layers[index] = layer;
-        //    //mapBoxを再描画
-        //    mapBox.Refresh();
-        //}
-
-        ///// <summary>
-        ///// 指定レイヤから最近の2つのポイントを取得する
-        ///// </summary>
-        //private Coordinate[] GetLast2Points(string layername)
-        //{
-        //    //レイヤ取得
-        //    VectorLayer layer = sharpMapHelper.GetVectorLayerByName(mapBox, layername);
-        //    //レイヤ内の全ジオメトリを取得
-        //    Collection<IGeometry> igeoms = sharpMapHelper.GetIGeometrysAll(layer);
-        //
-        //    //レイヤ内の全ジオメトリの中からPointのみを抽出
-        //    Collection<IGeometry> pointIgeoms = new Collection<IGeometry>();
-        //    foreach (IGeometry igeom in igeoms)
-        //    {
-        //        if (igeom.GeometryType == "Point")
-        //        {
-        //            pointIgeoms.Add(igeom);
-        //        }
-        //    }
-        //    //Pointが2つ以上ならばコレクション上、最後の2点を取得する
-        //    Coordinate[] linePos = new Coordinate[2];
-        //    int cnt = pointIgeoms.Count;
-        //    if (cnt >= 2)
-        //    {
-        //        linePos[0] = pointIgeoms[cnt - 2].Coordinate;
-        //        linePos[1] = pointIgeoms[cnt - 1].Coordinate;
-        //    }
-        //
-        //    return linePos;
-        //}
 
         ////指定レイヤ内で、マウスカーソルに当たるPointがあれば、そのPointを選択ジオメトリにセットする
         //private bool SelectPoint(string layername)
@@ -666,19 +606,17 @@ namespace WakeMap
             mapBox.Refresh();
         }
 
-        //イベント - マップの中心が変更(ZoomやPanによる変更も対象)
-        private void mapBox1_MapCenterChanged(Coordinate center)
-        {
-            //ラベルの再配置
-            refWakeController.RelocateLabel();
-        }
-
         //地図座標→イメージ座標に変換
         public System.Drawing.Point TransPosWorldToImage(Coordinate worldPos)
         {
             return System.Drawing.Point.Round(this.mapBox.Map.WorldToImage(worldPos));
         }
 
-
+        //イベント - マップの中心が変更(ZoomやPanによる変更も対象)
+        private void mapBox_MapCenterChanged(Coordinate center)
+        {
+            //ラベルの再配置
+            refWakeController.RelocateLabel();
+        }
     }
 }

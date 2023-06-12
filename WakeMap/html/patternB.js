@@ -58,23 +58,24 @@ function buttonClickGoDetail() {
 //航跡初期化
 function InitWake() {
     //var scene = "SceneA";
-    var scene = "SceneB";
+    //var scene = "SceneB";
+    var scene = "SceneC";
 
     //JSON文字列
     //AWake
     var strDictAWake = "\
     {\
         aWake1:{\
-            pos1:{ x: 120.307 , y: 35.846 },\
+            pos1:{ x: 120.007 , y: 35.846 },\
             pos2:{ x: 124.496 , y: 33.370 },\
             pos3:{ x: 121.259 , y: 31.974 },\
             pos4:{ x: 123.925 , y: 30.197 }\
         },\
         aWake2:{\
-            pos1:{ x: 134.080 , y: 41.495 },\
-            pos2:{ x: 136.238 , y: 40.479 },\
-            pos3:{ x: 133.572 , y: 39.781 },\
-            pos4:{ x: 136.238 , y: 38.892 }\
+            pos1:{ x: 136.238 , y: 38.892 },\
+            pos2:{ x: 133.572 , y: 39.781 },\
+            pos3:{ x: 136.238 , y: 40.479 },\
+            pos4:{ x: 134.080 , y: 41.495 }\
         },\
         aWake3:{\
             pos1:{ x: 143.855 , y: 34.703 },\
@@ -89,10 +90,10 @@ function InitWake() {
     var strDictBWake = "\
     {\
         bWake1:{\
-            pos1:{ x: 135.935 , y: 36.043 },\
-            pos2:{ x: 135.952 , y: 39.055 },\
+            pos1:{ x: 135.735 , y: 36.043 },\
+            pos2:{ x: 135.552 , y: 39.055 },\
             pos3:{ x: 135.220 , y: 38.740 },\
-            pos4:{ x: 134.321 , y: 39.655 },\
+            pos4:{ x: 134.321 , y: 38.955 },\
             pos5:{ x: 135.486 , y: 36.593 }\
         },\
         bWake2:{\
@@ -112,9 +113,66 @@ function InitWake() {
     }\
     ";
 
-    var strDictCPlace = "";
-    var strDictDTrack = "";
-    var strDictEArrow = "";
+    var strDictCPlace = "\
+    {\
+        cPlace1:{\
+            pos1:{ x: 135.615 , y: 38.840 },\
+            pos2:{ x: 135.432 , y: 39.439 },\
+            pos3:{ x: 134.767 , y: 38.940 },\
+            pos4:{ x: 134.534 , y: 39.656 }\
+        },\
+        cPlace2:{\
+            pos1:{ x: 133.968 , y: 40.155 },\
+            pos2:{ x: 134.867 , y: 39.939 },\
+            pos3:{ x: 134.983 , y: 40.355 },\
+            pos4:{ x: 135.715 , y: 40.205 }\
+        },\
+        cPlace3:{\
+            pos1:{ x: 135.932 , y: 40.887 },\
+            pos2:{ x: 135.266 , y: 40.704 },\
+            pos3:{ x: 135.116 , y: 41.220 },\
+            pos4:{ x: 134.484 , y: 41.070 }\
+        }\
+    }\
+    ";
+    var strDictDTrack = "\
+    {\
+        dTrack1:{\
+            pos1:{ x: 138.995 , y: 39.962 },\
+            pos2:{ x: 136.985 , y: 39.762 },\
+            pos3:{ x: 134.110 , y: 38.458 },\
+            pos4:{ x: 132.127 , y: 36.647 }\
+        },\
+        dTrack2:{\
+            pos1:{ x: 139.062 , y: 41.319 },\
+            pos2:{ x: 136.253 , y: 41.067 },\
+            pos3:{ x: 131.954 , y: 40.894 },\
+            pos4:{ x: 129.930 , y: 41.506 }\
+        }\
+    }\
+    ";
+    var strDictEArrow = "\
+    {\
+        e1:{\
+            arrow1:{ x: 135.615 , y: 38.840 , direction: 120 , distance: 0.4 },\
+            arrow2:{ x: 135.432 , y: 39.439 , direction: 225 , distance: 0.3 },\
+            arrow3:{ x: 134.767 , y: 38.940 , direction:  80 , distance: 0.3 },\
+            arrow4:{ x: 134.534 , y: 39.656 , direction: 290 , distance: 0.2 }\
+        },\
+        e2:{\
+            arrow1:{ x: 133.968 , y: 40.155 , direction: 350 , distance: 0.5 },\
+            arrow2:{ x: 134.867 , y: 39.939 , direction:  95 , distance: 0.2 },\
+            arrow3:{ x: 134.983 , y: 40.355 , direction: 315 , distance: 0.2 },\
+            arrow4:{ x: 135.715 , y: 40.205 , direction: 170 , distance: 0.3 }\
+        },\
+        e3:{\
+            arrow1:{ x: 135.932 , y: 40.887 , direction: 230 , distance: 0.2 },\
+            arrow2:{ x: 135.266 , y: 40.704 , direction:  45 , distance: 0.2 },\
+            arrow3:{ x: 135.116 , y: 41.220 , direction: 230 , distance: 0.2 },\
+            arrow4:{ x: 134.484 , y: 41.070 , direction:  60 , distance: 0.2 }\
+        }\
+    }\
+    ";
 
     //文字列内の空白を全て削除する
     strDictAWake = strDictAWake.replaceAll(/\s+/g, '');
