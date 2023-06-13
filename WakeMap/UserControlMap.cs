@@ -236,7 +236,6 @@ namespace WakeMap
         //    //if (this.radioButtonClickModeDraw.Checked == true)
         //    //{
         //    //    AddPointToLayer("pointLineLayer", g_worldPos);//pointLineLayerレイヤに点を追加
-        //    //    AddLineConnectLast2PointsToLayer("pointLineLayer");//pointLineLayerレイヤに線を追加
         //    //}
         //
         //    ////クリックモード == 点を選択する
@@ -276,7 +275,7 @@ namespace WakeMap
 
         private void mapBox_Click(object sender, EventArgs e)
         {
-            refWakeController.mapBox_Click(g_imagePos);
+            refWakeController.mapBox_ClickSelect(g_imagePos);
         }
 
 
@@ -417,40 +416,6 @@ namespace WakeMap
             //mapBoxを再描画
             mapBox.Refresh();
         }
-
-
-        ////pointLineLayerレイヤの更新(lineString追加)
-        //public void AddLineConnectLast2PointsToLayer(string layername)
-        //{
-        //    //pointLineLayerから最後の2点を取得
-        //    Coordinate[] linePos = GetLast2Points(layername);
-        //
-        //    if ((linePos[0] != null) && (linePos[1] != null))
-        //    {
-        //        //SharpMap補助クラス
-        //        SharpMapHelper smh = new SharpMapHelper();
-        //
-        //        //レイヤ取得
-        //        VectorLayer layer = smh.GetVectorLayerByName(mapBox, layername);
-        //        //ジオメトリ取得
-        //        Collection<IGeometry> igeoms = smh.GetIGeometrysAll(layer);
-        //
-        //        //図形生成クラス
-        //        GeometryFactory gf = new GeometryFactory();
-        //        //線をジオメトリに追加
-        //        igeoms.Add(gf.CreateLineString(linePos));
-        //
-        //        //ジオメトリをレイヤに反映
-        //        GeometryProvider gpro = new GeometryProvider(igeoms);
-        //        layer.DataSource = gpro;
-        //        //レイヤのインデックスを取得
-        //        int index = mapBox.Map.Layers.IndexOf(layer);
-        //        //レイヤを更新
-        //        mapBox.Map.Layers[index] = layer;
-        //        //mapBoxを再描画
-        //        mapBox.Refresh();
-        //    }
-        //}
 
         //ラインを追加
         public void AddLineToLayer(string layername, Coordinate[] coordinates)

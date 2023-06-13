@@ -10,6 +10,7 @@ using SharpMap.Layers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -42,12 +43,13 @@ namespace WakeMap
         //ディクショナリー(選択用)
         private Dictionary<string, Dictionary<string, double>> g_dictSelectAWake;
         private Dictionary<string, Dictionary<string, double>> g_dictSelectBWake;
-        private Dictionary<string, Dictionary<string, double>> g_dictSelectCPlac;
+        private Dictionary<string, Dictionary<string, double>> g_dictSelectCPlace;
         private Dictionary<string, Dictionary<string, double>> g_dictSelectDTrack;
         private Dictionary<string, Dictionary<string, double>> g_dictSelectEArrow;
 
         //航跡のコンフィグ
         public struct WakeCongfig {
+            public string layername; //レイヤ名
             public bool isPoint; //ポイント描画の有無
             public System.Drawing.Brush pointColor; //ポイント色
             public float pointSize; //ポイントサイズ
@@ -68,6 +70,11 @@ namespace WakeMap
         private WakeCongfig g_cfgEArrow = new WakeCongfig();
         //選択用
         private WakeCongfig g_cfgSelectAWake = new WakeCongfig();
+        private WakeCongfig g_cfgSelectBWake = new WakeCongfig();
+        private WakeCongfig g_cfgSelectCPlace = new WakeCongfig();
+        private WakeCongfig g_cfgSelectDTrack = new WakeCongfig();
+        private WakeCongfig g_cfgSelectEArrow = new WakeCongfig();
+
 
         //ラベルリスト
         public struct WakeLabel
@@ -150,26 +157,38 @@ namespace WakeMap
             {
                 case Scene.SceneA:
                     //Mapに描画する
-                    DrawWake(ref g_dictAWake, ref g_labelListAWake, ref g_cfgAWake, "layAWake");
+                    DrawLineWake(ref g_dictAWake, ref g_labelListAWake, ref g_cfgAWake);
 
-                    refUserControlMap.GenerateLayer("laySelectAWake");
-                    refUserControlMap.SetStyleLineToLayer("laySelectAWake", g_cfgSelectAWake.lineColor, g_cfgSelectAWake.lineWidth);
+                    GenerateSelectLayer(ref g_cfgSelectAWake);
 
                     break;
                 case Scene.SceneB:
                     //Mapに描画する
-                    DrawWake(ref g_dictAWake, ref g_labelListAWake, ref g_cfgAWake, "layAWake");
-                    DrawWake(ref g_dictBWake, ref g_labelListBWake, ref g_cfgBWake, "layBWake");
-                    DrawWake(ref g_dictCPlace, ref g_labelListDummy, ref g_cfgCPlace, "layCPlace");
-                    DrawWake(ref g_dictDTrack, ref g_labelListDTrack, ref g_cfgDTrack, "layDTrack");
+                    DrawLineWake(ref g_dictAWake, ref g_labelListAWake, ref g_cfgAWake);
+                    DrawLineWake(ref g_dictBWake, ref g_labelListBWake, ref g_cfgBWake);
+                    DrawLineWake(ref g_dictCPlace, ref g_labelListDummy, ref g_cfgCPlace);
+                    DrawLineWake(ref g_dictDTrack, ref g_labelListDTrack, ref g_cfgDTrack);
+
+                    GenerateSelectLayer(ref g_cfgSelectAWake);
+                    GenerateSelectLayer(ref g_cfgSelectBWake);
+                    GenerateSelectLayer(ref g_cfgSelectCPlace);
+                    GenerateSelectLayer(ref g_cfgSelectDTrack);
+
                     break;
                 case Scene.SceneC:
                     //Mapに描画する
-                    DrawWake(ref g_dictAWake, ref g_labelListAWake, ref g_cfgAWake, "layAWake");
-                    DrawWake(ref g_dictBWake, ref g_labelListBWake, ref g_cfgBWake, "layBWake");
-                    DrawWake(ref g_dictCPlace, ref g_labelListDummy, ref g_cfgCPlace, "layCPlace");
-                    DrawWake(ref g_dictDTrack, ref g_labelListDTrack, ref g_cfgDTrack, "layDTrack");
-                    DrawEArrow(ref g_dictEArrow, ref g_cfgEArrow, "EArrow");
+                    DrawLineWake(ref g_dictAWake, ref g_labelListAWake, ref g_cfgAWake);
+                    DrawLineWake(ref g_dictBWake, ref g_labelListBWake, ref g_cfgBWake);
+                    DrawLineWake(ref g_dictCPlace, ref g_labelListDummy, ref g_cfgCPlace);
+                    DrawLineWake(ref g_dictDTrack, ref g_labelListDTrack, ref g_cfgDTrack);
+                    DrawEArrow(ref g_dictEArrow, ref g_cfgEArrow);
+
+                    GenerateSelectLayer(ref g_cfgSelectAWake);
+                    GenerateSelectLayer(ref g_cfgSelectBWake);
+                    GenerateSelectLayer(ref g_cfgSelectCPlace);
+                    GenerateSelectLayer(ref g_cfgSelectDTrack);
+                    GenerateSelectLayer(ref g_cfgSelectEArrow);
+
                     break;
                 default:
                     break;
@@ -180,6 +199,7 @@ namespace WakeMap
         //コンフィグを初期化
         private void InitWakeConfig()
         {
+            g_cfgAWake.layername = "layAWake";
             g_cfgAWake.isPoint = false;
             g_cfgAWake.pointColor = System.Drawing.Brushes.White;
             g_cfgAWake.pointSize = 0;
@@ -192,6 +212,7 @@ namespace WakeMap
             g_cfgAWake.labelBackColor= System.Drawing.Color.Coral;
             g_cfgAWake.labelForeColor= System.Drawing.Color.Black;
 
+            g_cfgBWake.layername = "layBWake";
             g_cfgBWake.isPoint = false;
             g_cfgBWake.pointColor = System.Drawing.Brushes.White;
             g_cfgBWake.pointSize = 0;
@@ -204,6 +225,7 @@ namespace WakeMap
             g_cfgBWake.labelBackColor = System.Drawing.Color.Yellow;
             g_cfgBWake.labelForeColor = System.Drawing.Color.Black;
 
+            g_cfgCPlace.layername = "layCPlace";
             g_cfgCPlace.isPoint = true;
             g_cfgCPlace.pointColor = System.Drawing.Brushes.Aqua;
             g_cfgCPlace.pointSize = 5;
@@ -216,6 +238,7 @@ namespace WakeMap
             g_cfgCPlace.labelBackColor = System.Drawing.Color.Empty;
             g_cfgCPlace.labelForeColor = System.Drawing.Color.Empty;
 
+            g_cfgDTrack.layername = "layDTrack";
             g_cfgDTrack.isPoint = false;
             g_cfgDTrack.pointColor = System.Drawing.Brushes.White;
             g_cfgDTrack.pointSize = 0;
@@ -228,6 +251,7 @@ namespace WakeMap
             g_cfgDTrack.labelBackColor = System.Drawing.Color.LightGreen;
             g_cfgDTrack.labelForeColor = System.Drawing.Color.Black;
 
+            g_cfgEArrow.layername = "layEArrow";
             g_cfgEArrow.isPoint = false;
             g_cfgEArrow.pointColor = System.Drawing.Brushes.White;
             g_cfgEArrow.pointSize = 0;
@@ -240,6 +264,7 @@ namespace WakeMap
             g_cfgEArrow.labelBackColor = System.Drawing.Color.Empty;
             g_cfgEArrow.labelForeColor = System.Drawing.Color.Empty;
 
+            g_cfgSelectAWake.layername = "laySelectAWake";
             g_cfgSelectAWake.isPoint = false;
             g_cfgSelectAWake.pointColor = System.Drawing.Brushes.White;
             g_cfgSelectAWake.pointSize = 0;
@@ -251,6 +276,58 @@ namespace WakeMap
             g_cfgSelectAWake.isLabel = false;
             g_cfgSelectAWake.labelBackColor= System.Drawing.Color.Empty;
             g_cfgSelectAWake.labelForeColor= System.Drawing.Color.Empty;
+
+            g_cfgSelectBWake.layername = "laySelectBWake";
+            g_cfgSelectBWake.isPoint = false;
+            g_cfgSelectBWake.pointColor = System.Drawing.Brushes.White;
+            g_cfgSelectBWake.pointSize = 0;
+            g_cfgSelectBWake.isLine = true;
+            g_cfgSelectBWake.lineColor = System.Drawing.Color.Orange;
+            g_cfgSelectBWake.lineWidth = 2;
+            g_cfgSelectBWake.isLineDash = false;
+            g_cfgSelectBWake.isLineArrow = false;
+            g_cfgSelectBWake.isLabel = false;
+            g_cfgSelectBWake.labelBackColor = System.Drawing.Color.Empty;
+            g_cfgSelectBWake.labelForeColor = System.Drawing.Color.Empty;
+
+            g_cfgSelectCPlace.layername = "laySelectCPlace";
+            g_cfgSelectCPlace.isPoint = true;
+            g_cfgSelectCPlace.pointColor = System.Drawing.Brushes.Blue;
+            g_cfgSelectCPlace.pointSize = 5;
+            g_cfgSelectCPlace.isLine = false;
+            g_cfgSelectCPlace.lineColor = System.Drawing.Color.Empty;
+            g_cfgSelectCPlace.lineWidth = 0;
+            g_cfgSelectCPlace.isLineDash = false;
+            g_cfgSelectCPlace.isLineArrow = false;
+            g_cfgSelectCPlace.isLabel = false;
+            g_cfgSelectCPlace.labelBackColor = System.Drawing.Color.Empty;
+            g_cfgSelectCPlace.labelForeColor = System.Drawing.Color.Empty;
+
+            g_cfgSelectDTrack.layername = "laySelectDTrack";
+            g_cfgSelectDTrack.isPoint = false;
+            g_cfgSelectDTrack.pointColor = System.Drawing.Brushes.White;
+            g_cfgSelectDTrack.pointSize = 0;
+            g_cfgSelectDTrack.isLine = true;
+            g_cfgSelectDTrack.lineColor = System.Drawing.Color.Green;
+            g_cfgSelectDTrack.lineWidth = 2;
+            g_cfgSelectDTrack.isLineDash = false;
+            g_cfgSelectDTrack.isLineArrow = false;
+            g_cfgSelectDTrack.isLabel = false;
+            g_cfgSelectDTrack.labelBackColor = System.Drawing.Color.Empty;
+            g_cfgSelectDTrack.labelForeColor = System.Drawing.Color.Empty;
+
+            g_cfgSelectEArrow.layername = "laySelectEArrow";
+            g_cfgSelectEArrow.isPoint = false;
+            g_cfgSelectEArrow.pointColor = System.Drawing.Brushes.White;
+            g_cfgSelectEArrow.pointSize = 0;
+            g_cfgSelectEArrow.isLine = true;
+            g_cfgSelectEArrow.lineColor = System.Drawing.Color.Blue;
+            g_cfgSelectEArrow.lineWidth = 2;
+            g_cfgSelectEArrow.isLineDash = false;
+            g_cfgSelectEArrow.isLineArrow = true;
+            g_cfgSelectEArrow.isLabel = false;
+            g_cfgSelectEArrow.labelBackColor = System.Drawing.Color.Empty;
+            g_cfgSelectEArrow.labelForeColor = System.Drawing.Color.Empty;
         }
 
         //辞書を生成する
@@ -263,13 +340,14 @@ namespace WakeMap
         }
 
         //描画する
-        private void DrawWake(
+        private void DrawLineWake(
             ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
             ref List<WakeLabel> refWakeLabelList,
-            ref WakeCongfig refWakeCongfig,
-            string layername
+            ref WakeCongfig refWakeCongfig
             )
         {
+            string layername = refWakeCongfig.layername;
+
             //レイヤを生成
             refUserControlMap.GenerateLayer(layername);
 
@@ -287,9 +365,12 @@ namespace WakeMap
                     //座標を取得
                     foreach (var pos in wake.Value)
                     {
-                        Coordinate wpos = new Coordinate(pos.Value["x"], pos.Value["y"]);
-                        refUserControlMap.AddPointToLayer(layername, wpos);
-                        refUserControlMap.SetStylePointToLayer(layername, refWakeCongfig.pointColor, refWakeCongfig.pointSize);
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            refUserControlMap.AddPointToLayer(layername, coordinate);
+                            refUserControlMap.SetStylePointToLayer(layername, refWakeCongfig.pointColor, refWakeCongfig.pointSize);
+                        }
                     }
                 }
             }
@@ -304,8 +385,11 @@ namespace WakeMap
                     List<Coordinate> listCoordinate = new List<Coordinate>();
                     foreach (var pos in wake.Value)
                     {
-                        Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
-                        listCoordinate.Add(coordinate);
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            listCoordinate.Add(coordinate);
+                        }
                     }
                     //配列に変換
                     Coordinate[] coordinates = listCoordinate.ToArray();
@@ -334,7 +418,6 @@ namespace WakeMap
                 {
                     foreach (var pos in wake.Value)
                     {
-                        //refUserControlMap.SetPointOutLine(layername);
                         if (pos.Key == "pos1")
                         {
                             Coordinate wpos = new Coordinate(pos.Value["x"], pos.Value["y"]);
@@ -356,10 +439,11 @@ namespace WakeMap
         // EArrow用描画処理
         private void DrawEArrow(
             ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
-            ref WakeCongfig refWakeCongfig,
-            string layername
+            ref WakeCongfig refWakeCongfig
             )
         {
+            string layername = refWakeCongfig.layername;
+
             //矢印の描画
             //レイヤを生成
             refUserControlMap.GenerateLayer(layername);
@@ -375,25 +459,29 @@ namespace WakeMap
                 //wakeを取得
                 foreach (var wake in refDictWake)
                 {
-                    foreach (var info in wake.Value)
+                    foreach (var pos in wake.Value)
                     {
-                        //開始点の取得
-                        Coordinate start = new Coordinate(info.Value["x"], info.Value["y"]);
-                        //方位の取得
-                        float direction = (float)info.Value["direction"];
-                        //距離の取得
-                        float distance = (float)info.Value["distance"];
-                        //終点の算出
-                        double radian = direction * Math.PI / 180.0;
-                        double xStart = start.X;
-                        double yStart = start.Y;
-                        double x = xStart + distance * Math.Cos(radian);
-                        double y = yStart + distance * Math.Sin(radian);
-                        Coordinate end = new Coordinate(x, y);
-                        //配列を作成
-                        Coordinate[] coordinates = new Coordinate[2]{ start, end };
-                        //レイヤーにラインを追加
-                        refUserControlMap.AddLineToLayer(layername, coordinates);
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            //開始点の取得
+                            Coordinate start = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            //方位の取得
+                            float direction = (float)pos.Value["direction"];
+                            //距離の取得
+                            float distance = (float)pos.Value["distance"];
+                            //終点の算出
+                            double radian = direction * Math.PI / 180.0;
+                            double xStart = start.X;
+                            double yStart = start.Y;
+                            double x = xStart + distance * Math.Cos(radian);
+                            double y = yStart + distance * Math.Sin(radian);
+                            Coordinate end = new Coordinate(x, y);
+                            //配列を作成
+                            Coordinate[] coordinates = new Coordinate[2] { start, end };
+                            //レイヤーにラインを追加
+                            refUserControlMap.AddLineToLayer(layername, coordinates);
+                        }
+
                     }
                     //スタイルを設定
                     refUserControlMap.SetStyleLineToLayer(layername, refWakeCongfig.lineColor, refWakeCongfig.lineWidth);
@@ -460,99 +548,330 @@ namespace WakeMap
 
         //==============================================
 
+        //選択用レイヤー生成
+        private void GenerateSelectLayer( ref WakeCongfig refWakeCongfig )
+        {
+            //レイヤ生成
+            refUserControlMap.GenerateLayer(refWakeCongfig.layername);
+            if (refWakeCongfig.isPoint)
+            {
+                //点のスタイルを設定
+                refUserControlMap.SetStylePointToLayer(refWakeCongfig.layername, refWakeCongfig.pointColor, refWakeCongfig.pointSize);
+            }
+            if (refWakeCongfig.isLine)
+            {
+                //線のスタイルを設定
+                refUserControlMap.SetStyleLineToLayer(refWakeCongfig.layername, refWakeCongfig.lineColor, refWakeCongfig.lineWidth);
+                //破線を設定
+                if (refWakeCongfig.isLineDash)
+                {
+                    refUserControlMap.SetLineDash(refWakeCongfig.layername);
+                }
+                //矢印を設定
+                if (refWakeCongfig.isLineArrow)
+                {
+                    refUserControlMap.SetLineArrow(refWakeCongfig.layername);
+                }
+            }
+        }
+
         //
-        public void mapBox_Click(System.Drawing.Point clickPos)
+        public void mapBox_ClickSelect(System.Drawing.Point clickPos)
         {
             //クリック座標(イメージ座標)を取得
             //clickPos
 
-            bool isHit;
 
             //当たり判定
             switch (g_scene)
             {
                 case Scene.SceneA:
-                    //AWake g_dictAWake
-                    isHit = false;
-                    //foreach (var wake in refDictWake)
-                    foreach (var wake in g_dictAWake)
-                        {
-                        //座標リストを作成
-                        List<Coordinate> listCoordinate = new List<Coordinate>();
-                        foreach (var pos in wake.Value)
-                        {
-                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
-                            listCoordinate.Add(coordinate);
-                        }
-                        //当たり判定
-                        for(int i = 1;i< listCoordinate.Count; i++)
-                        {
-                            System.Drawing.Point start = refUserControlMap.TransPosWorldToImage(listCoordinate[i - 1]);
-                            System.Drawing.Point end = refUserControlMap.TransPosWorldToImage(listCoordinate[i]);
-                            int distance = DistancePointToLine(start, end, clickPos);
-                            //判定 #ピクセル
-                            if(distance < 5)
-                            {
-                                g_dictSelectAWake = wake.Value;
-                                isHit = true;
-                                break;
-                            }
-                        }
-                        if (isHit) { break; }
-                    }
-
-                    if (g_dictSelectAWake != null)
-                    {
-                        //===== 描画 =====
-                        //レイヤ取得(参照)
-                        VectorLayer layer = refUserControlMap.sharpMapHelper.GetVectorLayerByName(refUserControlMap.mapBox, "laySelectAWake");
-                        //ジオメトリ取得
-                        //Collection<IGeometry> igeoms = refUserControlMap.sharpMapHelper.GetIGeometrysAll(layer);
-                        //空のジオメトリ生成
-                        Collection<IGeometry> igeoms = new Collection<IGeometry>();
-
-                        //図形生成クラス
-                        GeometryFactory gf = new GeometryFactory();
-
-                        //座標リストを作成
-                        List<Coordinate> listCoordinate2 = new List<Coordinate>();
-                        foreach (var pos in g_dictSelectAWake)
-                        {
-                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
-                            listCoordinate2.Add(coordinate);
-                        }
-                        //配列に変換
-                        Coordinate[] coordinates = listCoordinate2.ToArray();
-                        //線をジオメトリに追加
-                        igeoms.Add(gf.CreateLineString(coordinates));
-
-                        //ジオメトリをレイヤに反映
-                        GeometryProvider gpro = new GeometryProvider(igeoms);
-                        layer.DataSource = gpro;
-                        //レイヤのインデックスを取得
-                        int index = refUserControlMap.mapBox.Map.Layers.IndexOf(layer);
-                        //レイヤを更新
-                        refUserControlMap.mapBox.Map.Layers[index] = layer;
-                        //mapBoxを再描画
-                        refUserControlMap.mapBox.Refresh();
-                    }
+                    SelectLineWake(ref g_dictSelectAWake, ref g_dictAWake, ref g_cfgSelectAWake, clickPos);
                     break;
                 case Scene.SceneB:
-                    //BWake
-                    //CPlace
-                    //DTrack
+                    SelectLineWake(ref g_dictSelectBWake, ref g_dictBWake, ref g_cfgSelectBWake, clickPos);
+                    SelectPointWake(ref g_dictSelectCPlace, ref g_dictCPlace, ref g_cfgSelectCPlace, clickPos);
+                    SelectLineWake(ref g_dictSelectDTrack, ref g_dictDTrack, ref g_cfgSelectDTrack, clickPos);
                     break;
                 case Scene.SceneC:
-                    //CPlace
-                    //DTrack
+                    SelectPointWake(ref g_dictSelectCPlace, ref g_dictCPlace, ref g_cfgSelectCPlace, clickPos);
+                    SelectLineWake(ref g_dictSelectDTrack, ref g_dictDTrack, ref g_cfgSelectDTrack, clickPos);
+
                     //EArrow
+                    //考え中・・・→点、方向、距離の当たり判定
+                    SelectEArrow(ref g_dictSelectEArrow, ref g_dictEArrow, ref g_cfgSelectEArrow, clickPos);
+
                     break;
                 default:
                     break;
             }
         }
 
+        //航跡を選択する（線）
+        private void SelectLineWake(
+            ref Dictionary<string, Dictionary<string, double>> refDictSelectWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref WakeCongfig refSelectWakeCongfig,
+            System.Drawing.Point clickPos)
+        {
+            bool isHit = false;
 
+            //===== 線と点の当たり判定 =====
+            {
+                foreach (var wake in refDictWake)
+                {
+                    //座標リストを作成
+                    List<Coordinate> listCoordinate = new List<Coordinate>();
+                    foreach (var pos in wake.Value)
+                    {
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            listCoordinate.Add(coordinate);
+                        }
+                    }
+                    //線の数ループ
+                    for (int i = 1; i < listCoordinate.Count; i++)
+                    {
+                        //線と点の距離を計算
+                        System.Drawing.Point start = refUserControlMap.TransPosWorldToImage(listCoordinate[i - 1]);
+                        System.Drawing.Point end = refUserControlMap.TransPosWorldToImage(listCoordinate[i]);
+                        int distance = DistancePointToLine(start, end, clickPos);
+                        //衝突判定
+                        if (distance < 5)
+                        {
+                            //選択用ディクショナリーに代入
+                            refDictSelectWake = wake.Value;
+                            isHit = true;
+                            break;
+                        }
+                    }
+                    if (isHit) { break; }
+                }
+            }
+
+            //===== 線の描画 =====
+            {
+                if (isHit)
+                {
+                    //レイヤ取得(参照)
+                    VectorLayer layer = refUserControlMap.sharpMapHelper.GetVectorLayerByName(refUserControlMap.mapBox, refSelectWakeCongfig.layername);
+                    //空のジオメトリ生成
+                    Collection<IGeometry> igeoms = new Collection<IGeometry>();
+                    //図形生成クラス
+                    GeometryFactory gf = new GeometryFactory();
+                    //座標リストを作成
+                    List<Coordinate> listCoordinate = new List<Coordinate>();
+                    foreach (var pos in refDictSelectWake)
+                    {
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            listCoordinate.Add(coordinate);
+                        }
+                    }
+                    //配列に変換
+                    Coordinate[] coordinates = listCoordinate.ToArray();
+                    //線をジオメトリに追加
+                    igeoms.Add(gf.CreateLineString(coordinates));
+                    //ジオメトリをレイヤに反映
+                    GeometryProvider gpro = new GeometryProvider(igeoms);
+                    layer.DataSource = gpro;
+                    //レイヤのインデックスを取得
+                    int index = refUserControlMap.mapBox.Map.Layers.IndexOf(layer);
+                    //レイヤを更新
+                    refUserControlMap.mapBox.Map.Layers[index] = layer;
+                    //mapBoxを再描画
+                    refUserControlMap.mapBox.Refresh();
+                }
+            }
+        }
+
+        //航跡を選択する（点）
+        private void SelectPointWake(
+            ref Dictionary<string, Dictionary<string, double>> refDictSelectWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref WakeCongfig refSelectWakeCongfig,
+            System.Drawing.Point clickPos)
+        {
+            bool isHit = false;
+
+            //===== 線と点の当たり判定 =====
+            {
+                foreach (var wake in refDictWake)
+                {
+                    foreach (var pos in wake.Value)
+                    {
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            //点と点の距離を計算
+                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            System.Drawing.Point point = refUserControlMap.TransPosWorldToImage(coordinate);
+                            int distance = DistancePointToPoint(point, clickPos);
+                            //衝突判定
+                            if (distance < 5)
+                            {
+                                //選択用ディクショナリーに代入
+                                refDictSelectWake = wake.Value;
+                                isHit = true;
+                                break;
+                            }
+
+                        }
+                    }
+                    if (isHit) { break; }
+                }
+            }
+
+            //===== 点の描画 =====
+            {
+                if (isHit)
+                {
+                    //レイヤ取得(参照)
+                    VectorLayer layer = refUserControlMap.sharpMapHelper.GetVectorLayerByName(refUserControlMap.mapBox, refSelectWakeCongfig.layername);
+                    //空のジオメトリ生成
+                    Collection<IGeometry> igeoms = new Collection<IGeometry>();
+                    //図形生成クラス
+                    GeometryFactory gf = new GeometryFactory();
+                    //座標リストを作成
+                    List<Coordinate> listCoordinate = new List<Coordinate>();
+                    foreach (var pos in refDictSelectWake)
+                    {
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            listCoordinate.Add(coordinate);
+                        }
+                    }
+                    //配列に変換
+                    Coordinate[] coordinates = listCoordinate.ToArray();
+                    //線をジオメトリに追加
+                    igeoms.Add(gf.CreateMultiPointFromCoords(coordinates));
+                    //ジオメトリをレイヤに反映
+                    GeometryProvider gpro = new GeometryProvider(igeoms);
+                    layer.DataSource = gpro;
+                    //レイヤのインデックスを取得
+                    int index = refUserControlMap.mapBox.Map.Layers.IndexOf(layer);
+                    //レイヤを更新
+                    refUserControlMap.mapBox.Map.Layers[index] = layer;
+                    //mapBoxを再描画
+                    refUserControlMap.mapBox.Refresh();
+                }
+            }
+        }
+
+        //航跡を選択する（EArrow）
+        private void SelectEArrow(
+            ref Dictionary<string, Dictionary<string, double>> refDictSelectWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref WakeCongfig refSelectWakeCongfig,
+            System.Drawing.Point clickPos)
+        {
+            bool isHit = false;
+
+            //===== EArrowと点の当たり判定 =====
+            {
+                foreach (var wake in refDictWake)
+                {
+                    //座標リストを作成
+                    List<Coordinate> listCoordinate = new List<Coordinate>();
+                    foreach (var pos in wake.Value)
+                    {
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            //Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            //listCoordinate.Add(coordinate);
+
+                            //===== 開始点と終点を取得 =====
+                            Coordinate[] coordinates = new Coordinate[2];
+                            {
+                                //開始点の取得
+                                Coordinate start = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                                //方位の取得
+                                float direction = (float)pos.Value["direction"];
+                                //距離の取得
+                                float distance = (float)pos.Value["distance"];
+                                //終点の算出
+                                double radian = direction * Math.PI / 180.0;
+                                double xStart = start.X;
+                                double yStart = start.Y;
+                                double x = xStart + distance * Math.Cos(radian);
+                                double y = yStart + distance * Math.Sin(radian);
+                                Coordinate end = new Coordinate(x, y);
+                                //配列を作成
+                                coordinates = new Coordinate[2] { start, end };
+                            }
+
+                            //===== 線と点の当たり判定 =====
+                            {
+                                //線と点の距離を計算
+                                System.Drawing.Point start = refUserControlMap.TransPosWorldToImage(coordinates[0]);
+                                System.Drawing.Point end = refUserControlMap.TransPosWorldToImage(coordinates[1]);
+                                int distance = DistancePointToLine(start, end, clickPos);
+                                //衝突判定
+                                if (distance < 5)
+                                {
+                                    //選択用ディクショナリーに代入
+                                    refDictSelectWake = wake.Value;
+                                    isHit = true;
+                                    break;
+
+                                }
+                            }
+
+                        }
+                    }
+                    if (isHit) { break; }
+                }
+            }
+
+            //===== 線の描画 =====
+            {
+                if (isHit)
+                {
+                    //レイヤ取得(参照)
+                    VectorLayer layer = refUserControlMap.sharpMapHelper.GetVectorLayerByName(refUserControlMap.mapBox, refSelectWakeCongfig.layername);
+                    //空のジオメトリ生成
+                    Collection<IGeometry> igeoms = new Collection<IGeometry>();
+                    //図形生成クラス
+                    GeometryFactory gf = new GeometryFactory();
+
+                    foreach (var pos in refDictSelectWake)
+                    {
+                        if (pos.Key.Contains("pos")) //Keyが"pos"を含む
+                        {
+                            //開始点の取得
+                            Coordinate start = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            //方位の取得
+                            float direction = (float)pos.Value["direction"];
+                            //距離の取得
+                            float distance = (float)pos.Value["distance"];
+                            //終点の算出
+                            double radian = direction * Math.PI / 180.0;
+                            double xStart = start.X;
+                            double yStart = start.Y;
+                            double x = xStart + distance * Math.Cos(radian);
+                            double y = yStart + distance * Math.Sin(radian);
+                            Coordinate end = new Coordinate(x, y);
+                            //配列を作成
+                            Coordinate[] coordinates = new Coordinate[2] { start, end };
+                            //レイヤーにラインを追加
+                            igeoms.Add(gf.CreateLineString(coordinates));
+                        }
+                    }
+
+                    //ジオメトリをレイヤに反映
+                    GeometryProvider gpro = new GeometryProvider(igeoms);
+                    layer.DataSource = gpro;
+                    //レイヤのインデックスを取得
+                    int index = refUserControlMap.mapBox.Map.Layers.IndexOf(layer);
+                    //レイヤを更新
+                    refUserControlMap.mapBox.Map.Layers[index] = layer;
+                    //mapBoxを再描画
+                    refUserControlMap.mapBox.Refresh();
+                }
+            }
+        }
 
 
         //==============================================
@@ -571,34 +890,43 @@ namespace WakeMap
             int xC = point.X;
             int yC = point.Y;
 
-            //int numerator = (xB - xA) * (xC - xA) + (yB - yA) * (yC - yA);
-            //int denominator = (xB - xA) * (xB - xA) + (yB - yA) * (yB - yA);
-            //float t = (float)numerator / (float)denominator;
-            //
-            //float xIntersection = xA + t * (xB - xA);
-            //float yIntersection = yA + t * (yB - yA);
-            //
-            //float distance = (float)Math.Sqrt(
-            //    ((float)xC - xIntersection) * ((float)xC - xIntersection) + 
-            //    ((float)yC - yIntersection) * ((float)yC - yIntersection)
-            //    );
+            //==== 線分ABの範囲内で点Cからの距離 ====
+            //線分ABの長さの二乗
+            double segmentLengthSquared = (xB - xA) * (xB - xA) + (yB - yA) * (yB - yA);
 
-            //線分ABの長さ
-            double segmentLength = Math.Sqrt((xB - xA) * (xB - xA) + (yB - yA) * (yB - yA));
+            //点Cから線分ABに垂直に下ろした垂線のベクトルと線分ABのベクトルとの内積を計算
+            double dotProduct = (xC - xA) * (xB - xA) + (yC - yA) * (yB - yA);
+            
+            //内積の値を線分ABの長さの二乗で割り、tの値を求める。tは垂線が線分AB上にある位置を示すパラメータ。
+            //Math.Max(0, Math.Min(1, ...)) の部分は、tの値が0以下の場合は0、1以上の場合は1となるように制限。
+            //これにより、垂線が線分ABの範囲外に出る場合でも正しい結果を得ることができる。
+            double t = Math.Max(0, Math.Min(1, dotProduct / segmentLengthSquared));
+            
+            //tを使って垂線の交点の座標を計算。線分AB上のtの値に基づいて、x座標とy座標を求める。
+            double xProjection = xA + t * (xB - xA);
+            double yProjection = yA + t * (yB - yA);
+            
+            //点Cと垂線の交点の座標との距離を計算。2次元平面上の距離の公式を使用して、点と点の距離を求めている。
+            double distance = Math.Sqrt((xC - xProjection) * (xC - xProjection) + (yC - yProjection) * (yC - yProjection));
 
-            //点Cから直線ABに垂直に下ろした垂線の距離 ( 無限に延びる直線とみなされる場合の距離を計算している )
-            double numerator = Math.Abs((xB - xA) * (yA - yC) - (xA - xC) * (yB - yA));
-            double distance = numerator / segmentLength;
-
-            //点Cが線分ABの範囲外にある場合、最短距離は点Aまたは点Bからの距離となる。
-            //その場合、点Cから点Aまたは点Bまでの距離を計算して、最小値を取る。
-            double distanceToA = Math.Sqrt((xC - xA) * (xC - xA) + (yC - yA) * (yC - yA)); //点Aとの距離
-            double distanceToB = Math.Sqrt((xC - xB) * (xC - xB) + (yC - yB) * (yC - yB)); //点Bとの距離
-            double minimumDistance = Math.Min(distance, Math.Min(distanceToA, distanceToB));
-
-            return (int)minimumDistance;
+            return (int)distance;
         }
 
+        //点と点の距離計算
+        private int DistancePointToPoint(
+            System.Drawing.Point pointA,
+            System.Drawing.Point pointB
+            )
+        {
+            int xA = pointA.X;
+            int yA = pointA.Y;
+            int xB = pointB.X;
+            int yB = pointB.Y;
+            double distance = Math.Sqrt((xB - xA) * (xB - xA) + (yB - yA) * (yB - yA));
+            return (int)distance;
+        }
+
+        
         //==============================================
 
     }
