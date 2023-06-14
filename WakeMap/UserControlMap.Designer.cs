@@ -81,7 +81,6 @@
             this.mapBox.Text = "mapBox1";
             this.mapBox.WheelZoomMagnitude = -2D;
             this.mapBox.MouseMove += new SharpMap.Forms.MapBox.MouseEventHandler(this.mapBox_MouseMove);
-            this.mapBox.MouseDown += new SharpMap.Forms.MapBox.MouseEventHandler(this.mapBox_MouseDown);
             this.mapBox.MapCenterChanged += new SharpMap.Forms.MapBox.MapCenterChangedHandler(this.mapBox_MapCenterChanged);
             this.mapBox.Click += new System.EventHandler(this.mapBox_Click);
             // 

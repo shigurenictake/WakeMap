@@ -578,11 +578,7 @@ namespace WakeMap
         //
         public void mapBox_ClickSelect(System.Drawing.Point clickPos)
         {
-            //クリック座標(イメージ座標)を取得
-            //clickPos
-
-
-            //当たり判定
+            //選択処理
             switch (g_scene)
             {
                 case Scene.SceneA:
@@ -595,12 +591,8 @@ namespace WakeMap
                     break;
                 case Scene.SceneC:
                     SelectPointWake(ref g_dictSelectCPlace, ref g_dictCPlace, ref g_cfgSelectCPlace, clickPos);
-                    SelectLineWake(ref g_dictSelectDTrack, ref g_dictDTrack, ref g_cfgSelectDTrack, clickPos);
-
-                    //EArrow
-                    //考え中・・・→点、方向、距離の当たり判定
+                    //SelectLineWake(ref g_dictSelectDTrack, ref g_dictDTrack, ref g_cfgSelectDTrack, clickPos); //SceneCではDTrackの選択なし
                     SelectEArrow(ref g_dictSelectEArrow, ref g_dictEArrow, ref g_cfgSelectEArrow, clickPos);
-
                     break;
                 default:
                     break;

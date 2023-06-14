@@ -60,7 +60,7 @@ function InitWake() {
     //var scene = "SceneA";
     //var scene = "SceneB";
     //var scene = "SceneC";
-    var scene = "SceneB";
+    var scene = "SceneC";
 
     //JSON文字列
     //AWake
@@ -119,7 +119,24 @@ function InitWake() {
         }\
     }\
     ";
-
+    var strDictDTrack = "\
+    {\
+        dTrack1:{\
+            primaryKey:{ id: 1 },\
+            pos1:{ x: 138.995 , y: 39.962 },\
+            pos2:{ x: 136.985 , y: 39.762 },\
+            pos3:{ x: 134.110 , y: 38.458 },\
+            pos4:{ x: 132.127 , y: 36.647 }\
+        },\
+        dTrack2:{\
+            primaryKey:{ id: 2 },\
+            pos1:{ x: 139.062 , y: 41.319 },\
+            pos2:{ x: 136.253 , y: 41.067 },\
+            pos3:{ x: 131.954 , y: 40.894 },\
+            pos4:{ x: 129.930 , y: 41.506 }\
+        }\
+    }\
+    ";
     var strDictCPlace = "\
     {\
         cPlace1:{\
@@ -145,46 +162,68 @@ function InitWake() {
         }\
     }\
     ";
-    var strDictDTrack = "\
+    var strDictCPlace2 = "\
     {\
-        dTrack1:{\
+        cPlace1:{\
             primaryKey:{ id: 1 },\
-            pos1:{ x: 138.995 , y: 39.962 },\
-            pos2:{ x: 136.985 , y: 39.762 },\
-            pos3:{ x: 134.110 , y: 38.458 },\
-            pos4:{ x: 132.127 , y: 36.647 }\
+            pos1:{ x: 135.615 , y: 38.840 }\
         },\
-        dTrack2:{\
+        cPlace2:{\
             primaryKey:{ id: 2 },\
-            pos1:{ x: 139.062 , y: 41.319 },\
-            pos2:{ x: 136.253 , y: 41.067 },\
-            pos3:{ x: 131.954 , y: 40.894 },\
-            pos4:{ x: 129.930 , y: 41.506 }\
+            pos2:{ x: 135.432 , y: 39.439 }\
+        },\
+        cPlace3:{\
+            primaryKey:{ id: 3 },\
+            pos3:{ x: 134.767 , y: 38.940 }\
+        },\
+        cPlace4:{\
+            primaryKey:{ id: 4 },\
+            pos4:{ x: 134.534 , y: 39.656 }\
         }\
     }\
     ";
+    //var strDictEArrow = "\
+    //{\
+    //    arrow1:{\
+    //        primaryKey:{ id: 1 },\
+    //        pos1:{ x: 135.615 , y: 38.840 , direction: 120 , distance: 0.4 },\
+    //        pos2:{ x: 135.432 , y: 39.439 , direction: 225 , distance: 0.3 },\
+    //        pos3:{ x: 134.767 , y: 38.940 , direction:  80 , distance: 0.3 },\
+    //        pos4:{ x: 134.534 , y: 39.656 , direction: 290 , distance: 0.2 }\
+    //    },\
+    //    arrow2:{\
+    //        primaryKey:{ id: 2 },\
+    //        pos1:{ x: 133.968 , y: 40.155 , direction: 350 , distance: 0.5 },\
+    //        pos2:{ x: 134.867 , y: 39.939 , direction:  95 , distance: 0.2 },\
+    //        pos3:{ x: 134.983 , y: 40.355 , direction: 315 , distance: 0.2 },\
+    //        pos4:{ x: 135.715 , y: 40.205 , direction: 170 , distance: 0.3 }\
+    //    },\
+    //    arrow3:{\
+    //        primaryKey:{ id: 3 },\
+    //        pos1:{ x: 135.932 , y: 40.887 , direction: 230 , distance: 0.2 },\
+    //        pos2:{ x: 135.266 , y: 40.704 , direction:  45 , distance: 0.2 },\
+    //        pos3:{ x: 135.116 , y: 41.220 , direction: 230 , distance: 0.2 },\
+    //        pos4:{ x: 134.484 , y: 41.070 , direction:  60 , distance: 0.2 }\
+    //    }\
+    //}\
+    //";
     var strDictEArrow = "\
     {\
         arrow1:{\
             primaryKey:{ id: 1 },\
-            pos1:{ x: 135.615 , y: 38.840 , direction: 120 , distance: 0.4 },\
-            pos2:{ x: 135.432 , y: 39.439 , direction: 225 , distance: 0.3 },\
-            pos3:{ x: 134.767 , y: 38.940 , direction:  80 , distance: 0.3 },\
-            pos4:{ x: 134.534 , y: 39.656 , direction: 290 , distance: 0.2 }\
+            pos1:{ x: 135.615 , y: 38.840 , direction: 120 , distance: 0.4 }\
         },\
         arrow2:{\
             primaryKey:{ id: 2 },\
-            pos1:{ x: 133.968 , y: 40.155 , direction: 350 , distance: 0.5 },\
-            pos2:{ x: 134.867 , y: 39.939 , direction:  95 , distance: 0.2 },\
-            pos3:{ x: 134.983 , y: 40.355 , direction: 315 , distance: 0.2 },\
-            pos4:{ x: 135.715 , y: 40.205 , direction: 170 , distance: 0.3 }\
+            pos1:{ x: 135.432 , y: 39.439 , direction: 225 , distance: 0.3 }\
         },\
         arrow3:{\
             primaryKey:{ id: 3 },\
-            pos1:{ x: 135.932 , y: 40.887 , direction: 230 , distance: 0.2 },\
-            pos2:{ x: 135.266 , y: 40.704 , direction:  45 , distance: 0.2 },\
-            pos3:{ x: 135.116 , y: 41.220 , direction: 230 , distance: 0.2 },\
-            pos4:{ x: 134.484 , y: 41.070 , direction:  60 , distance: 0.2 }\
+            pos1:{ x: 134.767 , y: 38.940 , direction:  80 , distance: 0.3 }\
+        },\
+        arrow4:{\
+            primaryKey:{ id: 4 },\
+            pos1:{ x: 134.534 , y: 39.656 , direction: 290 , distance: 0.2 }\
         }\
     }\
     ";
@@ -193,18 +232,50 @@ function InitWake() {
     strDictAWake = strDictAWake.replaceAll(/\s+/g, '');
     strDictBWake = strDictBWake.replaceAll(/\s+/g, '');
     strDictCPlace = strDictCPlace.replaceAll(/\s+/g, '');
+    strDictCPlace2 = strDictCPlace2.replaceAll(/\s+/g, '');
     strDictDTrack = strDictDTrack.replaceAll(/\s+/g, '');
     strDictEArrow = strDictEArrow.replaceAll(/\s+/g, '');
 
-    //C#の関数の実行
-    chrome.webview.hostObjects.jsToCs.InitWake(
-        scene,
-        strDictAWake,
-        strDictBWake,
-        strDictCPlace,
-        strDictDTrack,
-        strDictEArrow
-        );
+    switch ( scene ){
+        case "SceneA" :
+            //C#の関数の実行
+            chrome.webview.hostObjects.jsToCs.InitWake(
+                scene,
+                strDictAWake,
+                strDictBWake,
+                strDictCPlace,
+                strDictDTrack,
+                strDictEArrow
+                );
+            break;
+        case "SceneB" :
+            //C#の関数の実行
+            chrome.webview.hostObjects.jsToCs.InitWake(
+                scene,
+                strDictAWake,
+                strDictBWake,
+                strDictCPlace,
+                strDictDTrack,
+                strDictEArrow
+                );
+            break;
+        case "SceneC" :
+            //C#の関数の実行
+            chrome.webview.hostObjects.jsToCs.InitWake(
+                scene,
+                strDictAWake,
+                strDictBWake,
+                strDictCPlace2, //シーンB⇔Cでデータの持ち方が変わる
+                strDictDTrack,
+                strDictEArrow
+                );
+            break;
+        default : 
+            break;
+    }
+
+
+
 
 }
 

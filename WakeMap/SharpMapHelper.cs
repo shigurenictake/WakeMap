@@ -33,15 +33,17 @@ namespace WakeMap
                 }
             }
             return retlayer;
-            /*
+
             //使用例
-            //指定した領域()の特徴を返す Envelope( x1 , x2 , y1, y2)
-            Collection<IGeometry> geoms =
-                rlayer.DataSource.GetGeometriesInView(
-                    new GeoAPI.Geometries.Envelope(130, 140, 30, 40) //経度130～140, 緯度30～40で囲まれる四角形
-                );
-            foreach (IGeometry geom in geoms) { Console.WriteLine(geom); }
-            */
+            //{
+            //    //指定した領域()の特徴を返す Envelope( x1 , x2 , y1, y2)
+            //    Collection<IGeometry> geoms =
+            //        rlayer.DataSource.GetGeometriesInView(
+            //            new GeoAPI.Geometries.Envelope(130, 140, 30, 40) //経度130～140, 緯度30～40で囲まれる四角形
+            //        );
+            //    foreach (IGeometry geom in geoms) { Console.WriteLine(geom); }
+            //}
+
         }
 
         /// <summary>
@@ -61,10 +63,17 @@ namespace WakeMap
                 );
             return igeoms;
 
-            /*
             //使用例
-            foreach (IGeometry igeom in igeoms) { Console.WriteLine(geom); }
-            */
+            //{
+            //    //レイヤ内の全ジオメトリを取得
+            //    VectorLayer layer = sharpMapHelper.GetVectorLayerByName(mapBox, "pointLayer");
+            //    Collection<IGeometry> igeoms = sharpMapHelper.GetIGeometrysAll( layer );
+            //    //ジオメトリ一覧を表示
+            //    string text = string.Empty;
+            //    for (int i = 0; i < igeoms.Count; i++) { text = text + $"[ {i} ] : {igeoms[i]}" + "\n"; }
+            //    Console.WriteLine(text);
+            //}
+
         }
 
         /// <summary>
@@ -97,8 +106,8 @@ namespace WakeMap
         /// <summary>
         /// いずれかのPointと衝突しているか判定
         /// </summary>
-        /// <param name="rIndex"></param>
-        /// <param name="rHitIgeome"></param>
+        /// <param name="rIndex">判定結果：HITしたPointのindex/param>
+        /// <param name="rHitIgeome">判定結果：HITしたPointのIGeometry</param>
         /// <param name="mapbox"></param>
         /// <param name="layername"></param>
         /// <param name="nowWorldPos"></param>
@@ -152,7 +161,25 @@ namespace WakeMap
             rIndex = index;
             rHitIgeome = hitIgeome;
             return ret;
+
+            //使用例
+            //{
+            //    //mapBoxの"pointLayer"レイヤ内のPointジオメトリのいずれかがg_worldPosと衝突しているか判定
+            //    IGeometry hitIgeome = null;
+            //    int index = new int();
+            //    bool ishit = sharpMapHelper.CheckHitAnyPoints(ref index, ref hitIgeome, mapBox, "pointLayer", g_worldPos);
+            //    if (ishit == true)
+            //    {
+            //        string txt = $"ヒットしました : [ {index} ] : " + hitIgeome.ToString();
+            //        this.label3.Text = txt;
+            //    }
+            //    else
+            //    {
+            //        this.label3.Text = "ヒットなし";
+            //    }
+            //}
         }
+
 
         /// <summary>
         /// 2点間の距離
