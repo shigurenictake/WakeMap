@@ -67,21 +67,21 @@ function InitWake() {
     var strDictAWake = "\
     {\
         aWake1:{\
-            primaryKey:{ id: 1 },\
+            info:{ row: 1, id: 1 },\
             pos1:{ x: 120.007 , y: 35.846 },\
             pos2:{ x: 124.496 , y: 33.370 },\
             pos3:{ x: 121.259 , y: 31.974 },\
             pos4:{ x: 123.925 , y: 30.197 }\
         },\
         aWake2:{\
-            primaryKey:{ id: 2 },\
+            info:{ row: 2, id: 2 },\
             pos1:{ x: 136.238 , y: 38.892 },\
             pos2:{ x: 133.572 , y: 39.781 },\
             pos3:{ x: 136.238 , y: 40.479 },\
             pos4:{ x: 134.080 , y: 41.495 }\
         },\
         aWake3:{\
-            primaryKey:{ id: 3 },\
+            info:{ row: 3, id: 3 },\
             pos1:{ x: 143.855 , y: 34.703 },\
             pos2:{ x: 145.505 , y: 33.307 },\
             pos3:{ x: 143.030 , y: 32.545 },\
@@ -94,7 +94,7 @@ function InitWake() {
     var strDictBWake = "\
     {\
         bWake1:{\
-            primaryKey:{ id: 1 },\
+            info:{ row: 1, id: 1 },\
             pos1:{ x: 135.735 , y: 36.043 },\
             pos2:{ x: 135.552 , y: 39.055 },\
             pos3:{ x: 135.220 , y: 38.740 },\
@@ -102,7 +102,7 @@ function InitWake() {
             pos5:{ x: 135.486 , y: 36.593 }\
         },\
         bWake2:{\
-            primaryKey:{ id: 2 },\
+            info:{ row: 2, id: 2 },\
             pos1:{ x: 139.310 , y: 40.000 },\
             pos2:{ x: 135.183 , y: 39.773 },\
             pos3:{ x: 135.533 , y: 40.572 },\
@@ -110,7 +110,7 @@ function InitWake() {
             pos5:{ x: 139.393 , y: 40.588 }\
         },\
         bWake3:{\
-            primaryKey:{ id: 3 },\
+            info:{ row: 3, id: 3 },\
             pos1:{ x: 139.426 , y: 39.623 },\
             pos2:{ x: 132.405 , y: 39.041 },\
             pos3:{ x: 133.669 , y: 41.487 },\
@@ -122,14 +122,14 @@ function InitWake() {
     var strDictDTrack = "\
     {\
         dTrack1:{\
-            primaryKey:{ id: 1 },\
+            info:{ row: 1, id: 1 },\
             pos1:{ x: 138.995 , y: 39.962 },\
             pos2:{ x: 136.985 , y: 39.762 },\
             pos3:{ x: 134.110 , y: 38.458 },\
             pos4:{ x: 132.127 , y: 36.647 }\
         },\
         dTrack2:{\
-            primaryKey:{ id: 2 },\
+            info:{ row: 2, id: 2 },\
             pos1:{ x: 139.062 , y: 41.319 },\
             pos2:{ x: 136.253 , y: 41.067 },\
             pos3:{ x: 131.954 , y: 40.894 },\
@@ -140,21 +140,21 @@ function InitWake() {
     var strDictCPlace = "\
     {\
         cPlace1:{\
-            primaryKey:{ id: 1 },\
+            info:{ row: 1, id: 1 },\
             pos1:{ x: 135.615 , y: 38.840 },\
             pos2:{ x: 135.432 , y: 39.439 },\
             pos3:{ x: 134.767 , y: 38.940 },\
             pos4:{ x: 134.534 , y: 39.656 }\
         },\
         cPlace2:{\
-            primaryKey:{ id: 2 },\
+            info:{ row: 2, id: 2 },\
             pos1:{ x: 133.968 , y: 40.155 },\
             pos2:{ x: 134.867 , y: 39.939 },\
             pos3:{ x: 134.983 , y: 40.355 },\
             pos4:{ x: 135.715 , y: 40.205 }\
         },\
         cPlace3:{\
-            primaryKey:{ id: 3 },\
+            info:{ row: 3, id: 3 },\
             pos1:{ x: 135.932 , y: 40.887 },\
             pos2:{ x: 135.266 , y: 40.704 },\
             pos3:{ x: 135.116 , y: 41.220 },\
@@ -165,19 +165,19 @@ function InitWake() {
     var strDictCPlace2 = "\
     {\
         cPlace1:{\
-            primaryKey:{ id: 1 },\
+            info:{ row: 1, id: 1 },\
             pos1:{ x: 135.615 , y: 38.840 }\
         },\
         cPlace2:{\
-            primaryKey:{ id: 2 },\
+            info:{ row: 2, id: 2 },\
             pos2:{ x: 135.432 , y: 39.439 }\
         },\
         cPlace3:{\
-            primaryKey:{ id: 3 },\
+            info:{ row: 3, id: 3 },\
             pos3:{ x: 134.767 , y: 38.940 }\
         },\
         cPlace4:{\
-            primaryKey:{ id: 4 },\
+            info:{ row: 4, id: 4 },\
             pos4:{ x: 134.534 , y: 39.656 }\
         }\
     }\
@@ -210,19 +210,19 @@ function InitWake() {
     var strDictEArrow = "\
     {\
         arrow1:{\
-            primaryKey:{ id: 1 },\
+            primaryKey:{ row: 1, id: 1 },\
             pos1:{ x: 135.615 , y: 38.840 , direction: 120 , distance: 0.4 }\
         },\
         arrow2:{\
-            primaryKey:{ id: 2 },\
+            primaryKey:{ row: 2, id: 2 },\
             pos1:{ x: 135.432 , y: 39.439 , direction: 225 , distance: 0.3 }\
         },\
         arrow3:{\
-            primaryKey:{ id: 3 },\
+            primaryKey:{ row: 3, id: 3 },\
             pos1:{ x: 134.767 , y: 38.940 , direction:  80 , distance: 0.3 }\
         },\
         arrow4:{\
-            primaryKey:{ id: 4 },\
+            primaryKey:{ row: 4, id: 4 },\
             pos1:{ x: 134.534 , y: 39.656 , direction: 290 , distance: 0.2 }\
         }\
     }\

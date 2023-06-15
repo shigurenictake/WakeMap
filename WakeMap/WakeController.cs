@@ -337,6 +337,9 @@ namespace WakeMap
         ) {
             //JSON文字列をデシリアライズして、 Dictionary<string, Dictionary<string, Dictionary<string, double>>> 型のオブジェクトに格納
             refDictWake = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<string, double>>>>(strDictWake);
+
+             new JsonParser().JsonParserTest();
+            
         }
 
         //描画する
