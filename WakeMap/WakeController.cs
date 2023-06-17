@@ -34,18 +34,18 @@ namespace WakeMap
         private Scene g_scene;
 
         //ディクショナリー
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictAWake;
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictBWake;
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictCPlace;
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictDTrack;
-        private Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictEArrow;
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> g_dictAWake;
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> g_dictBWake;
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> g_dictCPlace;
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> g_dictDTrack;
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> g_dictEArrow;
 
         //ディクショナリー(選択用)
-        private Dictionary<string, Dictionary<string, double>> g_dictSelectAWake;
-        private Dictionary<string, Dictionary<string, double>> g_dictSelectBWake;
-        private Dictionary<string, Dictionary<string, double>> g_dictSelectCPlace;
-        private Dictionary<string, Dictionary<string, double>> g_dictSelectDTrack;
-        private Dictionary<string, Dictionary<string, double>> g_dictSelectEArrow;
+        private Dictionary<string, Dictionary<string, string>> g_dictSelectAWake;
+        private Dictionary<string, Dictionary<string, string>> g_dictSelectBWake;
+        private Dictionary<string, Dictionary<string, string>> g_dictSelectCPlace;
+        private Dictionary<string, Dictionary<string, string>> g_dictSelectDTrack;
+        private Dictionary<string, Dictionary<string, string>> g_dictSelectEArrow;
 
         //航跡のコンフィグ
         public struct WakeCongfig {
@@ -82,10 +82,10 @@ namespace WakeMap
             public Label label;
             public Coordinate worldPos;
         }
-        private List<WakeLabel> g_labelListAWake = new List<WakeLabel>();
-        private List<WakeLabel> g_labelListBWake = new List<WakeLabel>();
-        private List<WakeLabel> g_labelListDTrack = new List<WakeLabel>();
-        private List<WakeLabel> g_labelListDummy = new List<WakeLabel>();
+        private List<WakeLabel> g_labelListAWake;
+        private List<WakeLabel> g_labelListBWake;
+        private List<WakeLabel> g_labelListDTrack;
+        private List<WakeLabel> g_labelListDummy;
 
         /// <summary>
         /// 初期化
@@ -105,17 +105,58 @@ namespace WakeMap
             string strDictEArrow
             )
         {
-            Console.WriteLine(
-                $"scene = {scene}\n" +
-                $"strDictAWake = {strDictAWake}\n" +
-                $"strDictBWake = {strDictBWake}\n" +
-                $"strDictCPlace = {strDictCPlace}\n" +
-                $"strDictDTrack = {strDictDTrack}\n" +
-                $"strDictEArrow = {strDictEArrow}"
-                );
+            //Console.WriteLine(
+            //    $"scene = {scene}\n" +
+            //    $"strDictAWake = {strDictAWake}\n" +
+            //    $"strDictBWake = {strDictBWake}\n" +
+            //    $"strDictCPlace = {strDictCPlace}\n" +
+            //    $"strDictDTrack = {strDictDTrack}\n" +
+            //    $"strDictEArrow = {strDictEArrow}"
+            //    );
 
             //mapBoxの初期化
             refUserControlMap.InitLayerOtherThanBase();
+
+            //既存ラベルの破棄
+            // パネルのControlsコレクション内のラベルを全て削除する
+            if (g_labelListAWake != null) {
+                foreach (WakeLabel wakeLabel in g_labelListAWake)
+                {
+                    if (wakeLabel.label != null)
+                    {
+                        refUserControlMap.mapBox.Controls.Remove(wakeLabel.label);
+                        wakeLabel.label.Dispose(); // メモリ解放のためにDispose()メソッドを呼び出す
+                    }
+                }
+            }
+            g_labelListAWake = new List<WakeLabel>();
+
+            if (g_labelListBWake != null)
+            {
+                foreach (WakeLabel wakeLabel in g_labelListBWake)
+                {
+                    if (wakeLabel.label != null)
+                    {
+                        refUserControlMap.mapBox.Controls.Remove(wakeLabel.label);
+                        wakeLabel.label.Dispose(); // メモリ解放のためにDispose()メソッドを呼び出す
+                    }
+                }
+            }
+            g_labelListBWake = new List<WakeLabel>();
+
+            if (g_labelListDTrack != null)
+            {
+                foreach (WakeLabel wakeLabel in g_labelListDTrack)
+                {
+                    if (wakeLabel.label != null)
+                    {
+                        refUserControlMap.mapBox.Controls.Remove(wakeLabel.label);
+                        wakeLabel.label.Dispose(); // メモリ解放のためにDispose()メソッドを呼び出す
+                    }
+                }
+            }
+            g_labelListDTrack = new List<WakeLabel>();
+            g_labelListDummy = new List<WakeLabel>();
 
             //コンフィグを初期化
             InitWakeConfig();
@@ -332,19 +373,19 @@ namespace WakeMap
 
         //辞書を生成する
         private void GenerateWakeDictionary(
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictWake,
             string strDictWake
         ) {
             //JSON文字列をデシリアライズして、 Dictionary<string, Dictionary<string, Dictionary<string, double>>> 型のオブジェクトに格納
-            refDictWake = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<string, double>>>>(strDictWake);
+            //refDictWake = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<string, double>>>>(strDictWake);
 
-             new JsonParser().JsonParserTest();
+            refDictWake = new JsonParser().ParseDictSDictSDictSS(strDictWake);
             
         }
 
         //描画する
         private void DrawLineWake(
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictWake,
             ref List<WakeLabel> refWakeLabelList,
             ref WakeCongfig refWakeCongfig
             )
@@ -370,7 +411,7 @@ namespace WakeMap
                     {
                         if (pos.Key.Contains("pos")) //Keyが"pos"を含む
                         {
-                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate coordinate = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                             refUserControlMap.AddPointToLayer(layername, coordinate);
                             refUserControlMap.SetStylePointToLayer(layername, refWakeCongfig.pointColor, refWakeCongfig.pointSize);
                         }
@@ -390,7 +431,7 @@ namespace WakeMap
                     {
                         if (pos.Key.Contains("pos")) //Keyが"pos"を含む
                         {
-                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate coordinate = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                             listCoordinate.Add(coordinate);
                         }
                     }
@@ -423,7 +464,7 @@ namespace WakeMap
                     {
                         if (pos.Key == "pos1")
                         {
-                            Coordinate wpos = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate wpos = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                             //ラベル生成
                             GenerateLabel(ref refWakeLabelList,
                                 wpos,
@@ -441,7 +482,7 @@ namespace WakeMap
 
         // EArrow用描画処理
         private void DrawEArrow(
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictWake,
             ref WakeCongfig refWakeCongfig
             )
         {
@@ -467,11 +508,13 @@ namespace WakeMap
                         if (pos.Key.Contains("pos")) //Keyが"pos"を含む
                         {
                             //開始点の取得
-                            Coordinate start = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate start = new Coordinate(
+                                double.Parse(pos.Value["x"]),
+                                double.Parse(pos.Value["y"]) );
                             //方位の取得
-                            float direction = (float)pos.Value["direction"];
+                            float direction = float.Parse(pos.Value["direction"]);
                             //距離の取得
-                            float distance = (float)pos.Value["distance"];
+                            float distance = float.Parse(pos.Value["distance"]);
                             //終点の算出
                             double radian = direction * Math.PI / 180.0;
                             double xStart = start.X;
@@ -513,22 +556,19 @@ namespace WakeMap
             System.Drawing.Color ForeColor
             )
         {
-            //新しいラベルを生成
-            Label newLabel = new Label();
-            newLabel.Text = text;
-            newLabel.AutoSize = true;
-            //配置
-            newLabel.Location = refUserControlMap.TransPosWorldToImage(worldPos);
-            newLabel.BackColor = BackColor;
-            newLabel.ForeColor = ForeColor;
-            //コントロールに追加
-            refUserControlMap.mapBox.Controls.Add(newLabel);
-        
-            //リストに追加
+            //新しいラベルを生成 
             WakeLabel wakeLabel = new WakeLabel();
-            wakeLabel.label = newLabel;
+            wakeLabel.label = new Label();
+            wakeLabel.label.Text = text;
+            wakeLabel.label.AutoSize = true;
+            wakeLabel.label.Location = refUserControlMap.TransPosWorldToImage(worldPos);
+            wakeLabel.label.BackColor = BackColor;
+            wakeLabel.label.ForeColor = ForeColor;
             wakeLabel.worldPos = worldPos;
+            //リストに追加
             refListWakeLabel.Add(wakeLabel);
+            //コントロールに追加
+            refUserControlMap.mapBox.Controls.Add(refListWakeLabel[refListWakeLabel.Count-1].label);
         }
 
         // ラベルをmapboxに合わせて再配置
@@ -604,8 +644,8 @@ namespace WakeMap
 
         //航跡を選択する（線）
         private void SelectLineWake(
-            ref Dictionary<string, Dictionary<string, double>> refDictSelectWake,
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref Dictionary<string, Dictionary<string, string>> refDictSelectWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictWake,
             ref WakeCongfig refSelectWakeCongfig,
             System.Drawing.Point clickPos)
         {
@@ -621,7 +661,7 @@ namespace WakeMap
                     {
                         if (pos.Key.Contains("pos")) //Keyが"pos"を含む
                         {
-                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate coordinate = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                             listCoordinate.Add(coordinate);
                         }
                     }
@@ -661,7 +701,7 @@ namespace WakeMap
                     {
                         if (pos.Key.Contains("pos")) //Keyが"pos"を含む
                         {
-                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate coordinate = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                             listCoordinate.Add(coordinate);
                         }
                     }
@@ -684,8 +724,8 @@ namespace WakeMap
 
         //航跡を選択する（点）
         private void SelectPointWake(
-            ref Dictionary<string, Dictionary<string, double>> refDictSelectWake,
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref Dictionary<string, Dictionary<string, string>> refDictSelectWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictWake,
             ref WakeCongfig refSelectWakeCongfig,
             System.Drawing.Point clickPos)
         {
@@ -700,7 +740,7 @@ namespace WakeMap
                         if (pos.Key.Contains("pos")) //Keyが"pos"を含む
                         {
                             //点と点の距離を計算
-                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate coordinate = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                             System.Drawing.Point point = refUserControlMap.TransPosWorldToImage(coordinate);
                             int distance = DistancePointToPoint(point, clickPos);
                             //衝突判定
@@ -734,7 +774,7 @@ namespace WakeMap
                     {
                         if (pos.Key.Contains("pos")) //Keyが"pos"を含む
                         {
-                            Coordinate coordinate = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate coordinate = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                             listCoordinate.Add(coordinate);
                         }
                     }
@@ -757,8 +797,8 @@ namespace WakeMap
 
         //航跡を選択する（EArrow）
         private void SelectEArrow(
-            ref Dictionary<string, Dictionary<string, double>> refDictSelectWake,
-            ref Dictionary<string, Dictionary<string, Dictionary<string, double>>> refDictWake,
+            ref Dictionary<string, Dictionary<string, string>> refDictSelectWake,
+            ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictWake,
             ref WakeCongfig refSelectWakeCongfig,
             System.Drawing.Point clickPos)
         {
@@ -781,11 +821,11 @@ namespace WakeMap
                             Coordinate[] coordinates = new Coordinate[2];
                             {
                                 //開始点の取得
-                                Coordinate start = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                                Coordinate start = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                                 //方位の取得
-                                float direction = (float)pos.Value["direction"];
+                                float direction = float.Parse(pos.Value["direction"]);
                                 //距離の取得
-                                float distance = (float)pos.Value["distance"];
+                                float distance = float.Parse(pos.Value["distance"]);
                                 //終点の算出
                                 double radian = direction * Math.PI / 180.0;
                                 double xStart = start.X;
@@ -836,11 +876,11 @@ namespace WakeMap
                         if (pos.Key.Contains("pos")) //Keyが"pos"を含む
                         {
                             //開始点の取得
-                            Coordinate start = new Coordinate(pos.Value["x"], pos.Value["y"]);
+                            Coordinate start = new Coordinate(double.Parse(pos.Value["x"]), double.Parse(pos.Value["y"]));
                             //方位の取得
-                            float direction = (float)pos.Value["direction"];
+                            float direction = float.Parse(pos.Value["direction"]);
                             //距離の取得
-                            float distance = (float)pos.Value["distance"];
+                            float distance = float.Parse(pos.Value["distance"]);
                             //終点の算出
                             double radian = direction * Math.PI / 180.0;
                             double xStart = start.X;

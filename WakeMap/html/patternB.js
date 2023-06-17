@@ -32,242 +32,254 @@ function buttonClickGoDetail() {
 [ 6 ] : LINESTRING (143.03009967066674 32.545736938820568, 145.37853365509594 31.276313163453437)
 **/
 
-//JSON文字列
-//string strWakeList = @"
-//    {   
-//        wake1:{
-//            pos1:{ x: 120.307 , y: 35.846 },
-//            pos2:{ x: 124.496 , y: 33.370 },
-//            pos3:{ x: 121.259 , y: 31.974 },
-//            pos4:{ x: 123.925 , y: 30.197 }
-//        },
-//        wake2:{
-//            pos1:{ x: 134.080 , y: 41.495 },
-//            pos2:{ x: 136.238 , y: 40.479 },
-//            pos3:{ x: 133.572 , y: 39.781 },
-//            pos4:{ x: 136.238 , y: 38.892 }
-//        },
-//        wake3:{
-//            pos1:{ x: 143.855 , y: 34.703 },
-//            pos2:{ x: 145.505 , y: 33.307 },
-//            pos3:{ x: 143.030 , y: 32.545 },
-//            pos4:{ x: 145.378 , y: 31.276 }
-//        }
-//    }";
-
 //航跡初期化
 function InitWake() {
     //var scene = "SceneA";
     //var scene = "SceneB";
     //var scene = "SceneC";
-    var scene = "SceneC";
+    var scene = "SceneA";
 
     //JSON文字列
-    //AWake
-    var strDictAWake = "\
+    //SceneA ============================================================================
+    var SceneA_strDictAWake = "\
     {\
         aWake1:{\
             info:{ row: 1, id: 1 },\
-            pos1:{ x: 120.007 , y: 35.846 },\
-            pos2:{ x: 124.496 , y: 33.370 },\
-            pos3:{ x: 121.259 , y: 31.974 },\
-            pos4:{ x: 123.925 , y: 30.197 }\
+            pos1:{ x: 120.007 , y: 35.846 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 124.496 , y: 33.370 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 121.259 , y: 31.974 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 123.925 , y: 30.197 , 'date': '20230102' , 'time': '001144' }\
         },\
         aWake2:{\
             info:{ row: 2, id: 2 },\
-            pos1:{ x: 136.238 , y: 38.892 },\
-            pos2:{ x: 133.572 , y: 39.781 },\
-            pos3:{ x: 136.238 , y: 40.479 },\
-            pos4:{ x: 134.080 , y: 41.495 }\
+            pos1:{ x: 136.238 , y: 38.892 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 133.572 , y: 39.781 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 136.238 , y: 40.479 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 134.080 , y: 41.495 , 'date': '20230102' , 'time': '001144' }\
         },\
         aWake3:{\
             info:{ row: 3, id: 3 },\
-            pos1:{ x: 143.855 , y: 34.703 },\
-            pos2:{ x: 145.505 , y: 33.307 },\
-            pos3:{ x: 143.030 , y: 32.545 },\
-            pos4:{ x: 145.378 , y: 31.276 }\
+            pos1:{ x: 143.855 , y: 34.703 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 145.505 , y: 33.307 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 143.030 , y: 32.545 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 145.378 , y: 31.276 , 'date': '20230102' , 'time': '001144' }\
         }\
     }\
     ";
 
-    //BWake
-    var strDictBWake = "\
+    //SceneB ============================================================================
+    var SceneB_strDictAWake = "\
+    {\
+        aWake2:{\
+            info:{ row: 2, id: 2 },\
+            pos1:{ x: 136.238 , y: 38.892 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 133.572 , y: 39.781 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 136.238 , y: 40.479 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 134.080 , y: 41.495 , 'date': '20230102' , 'time': '001144' }\
+        }\
+    }\
+    ";
+    var SceneB_strDictBWake = "\
     {\
         bWake1:{\
             info:{ row: 1, id: 1 },\
-            pos1:{ x: 135.735 , y: 36.043 },\
-            pos2:{ x: 135.552 , y: 39.055 },\
-            pos3:{ x: 135.220 , y: 38.740 },\
-            pos4:{ x: 134.321 , y: 38.955 },\
-            pos5:{ x: 135.486 , y: 36.593 }\
+            pos1:{ x: 135.735 , y: 36.043 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 135.552 , y: 39.055 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 135.220 , y: 38.740 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 134.321 , y: 38.955 , 'date': '20230102' , 'time': '001144' },\
+            pos5:{ x: 135.486 , y: 36.593 , 'date': '20230102' , 'time': '001155' }\
         },\
         bWake2:{\
             info:{ row: 2, id: 2 },\
-            pos1:{ x: 139.310 , y: 40.000 },\
-            pos2:{ x: 135.183 , y: 39.773 },\
-            pos3:{ x: 135.533 , y: 40.572 },\
-            pos4:{ x: 135.233 , y: 41.088 },\
-            pos5:{ x: 139.393 , y: 40.588 }\
+            pos1:{ x: 139.310 , y: 40.000 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 135.183 , y: 39.773 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 135.533 , y: 40.572 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 135.233 , y: 41.088 , 'date': '20230102' , 'time': '001144' },\
+            pos5:{ x: 139.393 , y: 40.588 , 'date': '20230102' , 'time': '001155' }\
         },\
         bWake3:{\
             info:{ row: 3, id: 3 },\
-            pos1:{ x: 139.426 , y: 39.623 },\
-            pos2:{ x: 132.405 , y: 39.041 },\
-            pos3:{ x: 133.669 , y: 41.487 },\
-            pos4:{ x: 133.187 , y: 42.886 },\
-            pos5:{ x: 139.476 , y: 41.936 }\
+            pos1:{ x: 139.426 , y: 39.623 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 132.405 , y: 39.041 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 133.669 , y: 41.487 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 133.187 , y: 42.886 , 'date': '20230102' , 'time': '001144' },\
+            pos5:{ x: 139.476 , y: 41.936 , 'date': '20230102' , 'time': '001155' }\
         }\
     }\
     ";
-    var strDictDTrack = "\
+    var SceneB_strDictCPlace = "\
+    {\
+        cPlace1:{\
+            info:{ row: 1, id: 1 },\
+            pos1:{ x: 135.615 , y: 38.840 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 135.432 , y: 39.439 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 134.767 , y: 38.940 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 134.534 , y: 39.656 , 'date': '20230102' , 'time': '001144' }\
+        },\
+        cPlace2:{\
+            info:{ row: 2, id: 2 },\
+            pos1:{ x: 133.968 , y: 40.155 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 134.867 , y: 39.939 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 134.983 , y: 40.355 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 135.715 , y: 40.205 , 'date': '20230102' , 'time': '001144' }\
+        },\
+        cPlace3:{\
+            info:{ row: 3, id: 3 },\
+            pos1:{ x: 135.932 , y: 40.887 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 135.266 , y: 40.704 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 135.116 , y: 41.220 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 134.484 , y: 41.070 , 'date': '20230102' , 'time': '001144' }\
+        }\
+    }\
+    ";
+    var SceneB_strDictDTrack = "\
     {\
         dTrack1:{\
             info:{ row: 1, id: 1 },\
-            pos1:{ x: 138.995 , y: 39.962 },\
-            pos2:{ x: 136.985 , y: 39.762 },\
-            pos3:{ x: 134.110 , y: 38.458 },\
-            pos4:{ x: 132.127 , y: 36.647 }\
+            pos1:{ x: 138.995 , y: 39.962 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 136.985 , y: 39.762 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 134.110 , y: 38.458 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 132.127 , y: 36.647 , 'date': '20230102' , 'time': '001144' }\
         },\
         dTrack2:{\
             info:{ row: 2, id: 2 },\
-            pos1:{ x: 139.062 , y: 41.319 },\
-            pos2:{ x: 136.253 , y: 41.067 },\
-            pos3:{ x: 131.954 , y: 40.894 },\
-            pos4:{ x: 129.930 , y: 41.506 }\
+            pos1:{ x: 139.062 , y: 41.319 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 136.253 , y: 41.067 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 131.954 , y: 40.894 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 129.930 , y: 41.506 , 'date': '20230102' , 'time': '001144' }\
         }\
     }\
     ";
-    var strDictCPlace = "\
+
+    //SceneC ============================================================================
+    var SceneC_strDictAWake = "\
     {\
-        cPlace1:{\
-            info:{ row: 1, id: 1 },\
-            pos1:{ x: 135.615 , y: 38.840 },\
-            pos2:{ x: 135.432 , y: 39.439 },\
-            pos3:{ x: 134.767 , y: 38.940 },\
-            pos4:{ x: 134.534 , y: 39.656 }\
-        },\
-        cPlace2:{\
+        aWake2:{\
             info:{ row: 2, id: 2 },\
-            pos1:{ x: 133.968 , y: 40.155 },\
-            pos2:{ x: 134.867 , y: 39.939 },\
-            pos3:{ x: 134.983 , y: 40.355 },\
-            pos4:{ x: 135.715 , y: 40.205 }\
-        },\
-        cPlace3:{\
-            info:{ row: 3, id: 3 },\
-            pos1:{ x: 135.932 , y: 40.887 },\
-            pos2:{ x: 135.266 , y: 40.704 },\
-            pos3:{ x: 135.116 , y: 41.220 },\
-            pos4:{ x: 134.484 , y: 41.070 }\
+            pos1:{ x: 136.238 , y: 38.892 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 133.572 , y: 39.781 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 136.238 , y: 40.479 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 134.080 , y: 41.495 , 'date': '20230102' , 'time': '001144' }\
         }\
     }\
     ";
-    var strDictCPlace2 = "\
+    var SceneC_strDictBWake = "\
+    {\
+        bWake1:{\
+            info:{ row: 1, id: 1 },\
+            pos1:{ x: 135.735 , y: 36.043 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 135.552 , y: 39.055 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 135.220 , y: 38.740 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 134.321 , y: 38.955 , 'date': '20230102' , 'time': '001144' },\
+            pos5:{ x: 135.486 , y: 36.593 , 'date': '20230102' , 'time': '001155' }\
+        }\
+    }\
+    ";
+    var SceneC_strDictCPlace = "\
     {\
         cPlace1:{\
             info:{ row: 1, id: 1 },\
-            pos1:{ x: 135.615 , y: 38.840 }\
+            pos1:{ x: 135.615 , y: 38.840 , 'date': '20230101' , 'time': '001111' }\
         },\
         cPlace2:{\
             info:{ row: 2, id: 2 },\
-            pos2:{ x: 135.432 , y: 39.439 }\
+            pos2:{ x: 135.432 , y: 39.439 , 'date': '20230101' , 'time': '001122' }\
         },\
         cPlace3:{\
             info:{ row: 3, id: 3 },\
-            pos3:{ x: 134.767 , y: 38.940 }\
+            pos3:{ x: 134.767 , y: 38.940 , 'date': '20230102' , 'time': '001133' }\
         },\
         cPlace4:{\
             info:{ row: 4, id: 4 },\
-            pos4:{ x: 134.534 , y: 39.656 }\
+            pos4:{ x: 134.534 , y: 39.656 , 'date': '20230102' , 'time': '001144' }\
         }\
     }\
     ";
-    //var strDictEArrow = "\
-    //{\
-    //    arrow1:{\
-    //        primaryKey:{ id: 1 },\
-    //        pos1:{ x: 135.615 , y: 38.840 , direction: 120 , distance: 0.4 },\
-    //        pos2:{ x: 135.432 , y: 39.439 , direction: 225 , distance: 0.3 },\
-    //        pos3:{ x: 134.767 , y: 38.940 , direction:  80 , distance: 0.3 },\
-    //        pos4:{ x: 134.534 , y: 39.656 , direction: 290 , distance: 0.2 }\
-    //    },\
-    //    arrow2:{\
-    //        primaryKey:{ id: 2 },\
-    //        pos1:{ x: 133.968 , y: 40.155 , direction: 350 , distance: 0.5 },\
-    //        pos2:{ x: 134.867 , y: 39.939 , direction:  95 , distance: 0.2 },\
-    //        pos3:{ x: 134.983 , y: 40.355 , direction: 315 , distance: 0.2 },\
-    //        pos4:{ x: 135.715 , y: 40.205 , direction: 170 , distance: 0.3 }\
-    //    },\
-    //    arrow3:{\
-    //        primaryKey:{ id: 3 },\
-    //        pos1:{ x: 135.932 , y: 40.887 , direction: 230 , distance: 0.2 },\
-    //        pos2:{ x: 135.266 , y: 40.704 , direction:  45 , distance: 0.2 },\
-    //        pos3:{ x: 135.116 , y: 41.220 , direction: 230 , distance: 0.2 },\
-    //        pos4:{ x: 134.484 , y: 41.070 , direction:  60 , distance: 0.2 }\
-    //    }\
-    //}\
-    //";
-    var strDictEArrow = "\
+    var SceneC_strDictDTrack = "\
+    {\
+        dTrack1:{\
+            info:{ row: 1, id: 1 },\
+            pos1:{ x: 138.995 , y: 39.962 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 136.985 , y: 39.762 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 134.110 , y: 38.458 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 132.127 , y: 36.647 , 'date': '20230102' , 'time': '001144' }\
+        },\
+        dTrack2:{\
+            info:{ row: 2, id: 2 },\
+            pos1:{ x: 139.062 , y: 41.319 , 'date': '20230101' , 'time': '001111' },\
+            pos2:{ x: 136.253 , y: 41.067 , 'date': '20230101' , 'time': '001122' },\
+            pos3:{ x: 131.954 , y: 40.894 , 'date': '20230102' , 'time': '001133' },\
+            pos4:{ x: 129.930 , y: 41.506 , 'date': '20230102' , 'time': '001144' }\
+        }\
+    }\
+    ";
+    var SceneC_strDictEArrow = "\
     {\
         arrow1:{\
             primaryKey:{ row: 1, id: 1 },\
-            pos1:{ x: 135.615 , y: 38.840 , direction: 120 , distance: 0.4 }\
+            pos1:{ x: 135.615 , y: 38.840 , direction: 120 , distance: 0.4 , 'date': '20230101' , 'time': '001111' }\
         },\
         arrow2:{\
             primaryKey:{ row: 2, id: 2 },\
-            pos1:{ x: 135.432 , y: 39.439 , direction: 225 , distance: 0.3 }\
+            pos1:{ x: 135.432 , y: 39.439 , direction: 225 , distance: 0.3 , 'date': '20230101' , 'time': '001122' }\
         },\
         arrow3:{\
             primaryKey:{ row: 3, id: 3 },\
-            pos1:{ x: 134.767 , y: 38.940 , direction:  80 , distance: 0.3 }\
+            pos1:{ x: 134.767 , y: 38.940 , direction:  80 , distance: 0.3 , 'date': '20230102' , 'time': '001133' }\
         },\
         arrow4:{\
             primaryKey:{ row: 4, id: 4 },\
-            pos1:{ x: 134.534 , y: 39.656 , direction: 290 , distance: 0.2 }\
+            pos1:{ x: 134.534 , y: 39.656 , direction: 290 , distance: 0.2 , 'date': '20230102' , 'time': '001144' }\
         }\
     }\
     ";
 
     //文字列内の空白を全て削除する
-    strDictAWake = strDictAWake.replaceAll(/\s+/g, '');
-    strDictBWake = strDictBWake.replaceAll(/\s+/g, '');
-    strDictCPlace = strDictCPlace.replaceAll(/\s+/g, '');
-    strDictCPlace2 = strDictCPlace2.replaceAll(/\s+/g, '');
-    strDictDTrack = strDictDTrack.replaceAll(/\s+/g, '');
-    strDictEArrow = strDictEArrow.replaceAll(/\s+/g, '');
+    SceneA_strDictAWake  = SceneA_strDictAWake.replaceAll(/\s+/g, '');
+
+    SceneB_strDictAWake  = SceneB_strDictAWake.replaceAll(/\s+/g, '');
+    SceneB_strDictBWake  = SceneB_strDictBWake.replaceAll(/\s+/g, '');
+    SceneB_strDictCPlace = SceneB_strDictCPlace.replaceAll(/\s+/g, '');
+    SceneB_strDictDTrack = SceneB_strDictDTrack.replaceAll(/\s+/g, '');
+
+    SceneC_strDictAWake  = SceneC_strDictAWake.replaceAll(/\s+/g, '');
+    SceneC_strDictBWake  = SceneC_strDictBWake.replaceAll(/\s+/g, '');
+    SceneC_strDictCPlace = SceneC_strDictCPlace.replaceAll(/\s+/g, '');
+    SceneC_strDictDTrack = SceneC_strDictDTrack.replaceAll(/\s+/g, '');
+    SceneC_strDictEArrow = SceneC_strDictEArrow.replaceAll(/\s+/g, '');
 
     switch ( scene ){
         case "SceneA" :
             //C#の関数の実行
             chrome.webview.hostObjects.jsToCs.InitWake(
                 scene,
-                strDictAWake,
-                strDictBWake,
-                strDictCPlace,
-                strDictDTrack,
-                strDictEArrow
+                SceneA_strDictAWake,
+                null,
+                null,
+                null,
+                null
                 );
             break;
         case "SceneB" :
             //C#の関数の実行
             chrome.webview.hostObjects.jsToCs.InitWake(
                 scene,
-                strDictAWake,
-                strDictBWake,
-                strDictCPlace,
-                strDictDTrack,
-                strDictEArrow
+                SceneB_strDictAWake,
+                SceneB_strDictBWake,
+                SceneB_strDictCPlace,
+                SceneB_strDictDTrack,
+                null
                 );
             break;
         case "SceneC" :
             //C#の関数の実行
             chrome.webview.hostObjects.jsToCs.InitWake(
                 scene,
-                strDictAWake,
-                strDictBWake,
-                strDictCPlace2, //シーンB⇔Cでデータの持ち方が変わる
-                strDictDTrack,
-                strDictEArrow
+                SceneC_strDictAWake,
+                SceneC_strDictBWake,
+                SceneC_strDictCPlace, //シーンB⇔Cでデータの持ち方が変わる
+                SceneC_strDictDTrack,
+                SceneC_strDictEArrow
                 );
             break;
         default : 
