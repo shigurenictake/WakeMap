@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WakeMap
 {
@@ -12,33 +9,33 @@ namespace WakeMap
         {
             string strDictAWake = @"
                 {
-                    aWake1:
+                    'aWake1':
                     {
-                        info: { row: 1, id: 1 },
-                        pos1: { x: 120.007 , y: 35.846 },
-                        pos2: { x: 124.496 , y: 33.370 },
-                        pos3: { x: 121.259 , y: 31.974 },
-                        pos4: { x: 123.925 , y: 30.197 }
+                        info: { row: '1', id: '11' },
+                        pos1: { x: 120.007 , y: 35.846 , 'date': 'yyyymmdd' , 'time': 'hhmmss' },
+                        pos2: { x: 124.496 , y: 33.370 , 'date': 'yyyymmdd' , 'time': 'hhmmss' },
+                        pos3: { x: 121.259 , y: 31.974 , 'date': 'yyyymmdd' , 'time': 'hhmmss' },
+                        pos4: { x: 123.925 , y: 30.197 , 'date': 'yyyymmdd' , 'time': 'hhmmss' }
                     },
                     aWake2:
                     {
-                        info: { row: 2, id: 2 },
-                        pos1: { x: 136.238 , y: 38.892 },
-                        pos2: { x: 133.572 , y: 39.781 },
-                        pos3: { x: 136.238 , y: 40.479 },
-                        pos4: { x: 134.080 , y: 41.495 }
+                        info: { row: 2, id: 12 },
+                        pos1: { x: 136.238 , y: 38.892 , 'date': '20221101' , 'time': '112131' },
+                        pos2: { x: 133.572 , y: 39.781 , 'date': '20221102' , 'time': '112132' },
+                        pos3: { x: 136.238 , y: 40.479 , 'date': '20221103' , 'time': '112133' },
+                        pos4: { x: 134.080 , y: 41.495 , 'date': '20221104' , 'time': '112134' }
                     },
                     aWake3:
                     {
-                        info: { row: 3, id: 3 },
-                        pos1: { x: 143.855 , y: 34.703 },
-                        pos2: { x: 145.505 , y: 33.307 },
-                        pos3: { x: 143.030 , y: 32.545 },
-                        pos4: { x: 145.378 , y: 31.276 }
+                        info: { row: 3, id: 13 },
+                        pos1: { x: 143.855 , y: 34.703 , 'date': '20221101' , 'time': '112141' },
+                        pos2: { x: 145.505 , y: 33.307 , 'date': '20221102' , 'time': '112142' },
+                        pos3: { x: 143.030 , y: 32.545 , 'date': '20221103' , 'time': '112143' },
+                        pos4: { x: 145.378 , y: 31.276 , 'date': '20221104' , 'time': '112144' }
                     }
                 }";
 
-            Dictionary<string, Dictionary<string, Dictionary<string, double>>> g_dictA = ParseDictJSON(strDictAWake);
+            Dictionary<string, Dictionary<string, Dictionary<string, string>>> g_dictA = ParseDictSDictSDictSS(strDictAWake);
 
             // 結果を出力して確認する
             foreach (var pair1 in g_dictA)
@@ -55,9 +52,9 @@ namespace WakeMap
             }
         }
 
-        static Dictionary<string, Dictionary<string, Dictionary<string, double>>> ParseDictJSON(string jsonString)
+        static Dictionary<string, Dictionary<string, Dictionary<string, string>>> ParseDictSDictSDictSS(string jsonString)
         {
-            Dictionary<string, Dictionary<string, Dictionary<string, double>>> result = new Dictionary<string, Dictionary<string, Dictionary<string, double>>>();
+            Dictionary<string, Dictionary<string, Dictionary<string, string>>> result = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 
             // 不要な空白や改行を削除
             jsonString = jsonString.Replace(" ", "").Replace("\r", "").Replace("\n", "");
@@ -70,7 +67,7 @@ namespace WakeMap
             //debug
             {
                 Console.WriteLine("");
-                Console.WriteLine("======= ParseDictJSON 開始 =======");
+                Console.WriteLine("======= ParseDictSDictSDictSS 開始 =======");
                 Console.WriteLine($"jsonString =");
                 Console.WriteLine($"00        10        20        30        40        50        60        70        80        90        100       110       120       130       140       150       160       170       190       200       210       220       230       240       ");
                 Console.WriteLine($"012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
@@ -100,7 +97,8 @@ namespace WakeMap
                     break;
 
                 // キーを取得
-                string key = jsonString.Substring(keyStart, keyEnd - (keyStart - 1) ).Trim('\"');
+                string key = jsonString.Substring(keyStart, keyEnd - (keyStart - 1) );
+                key = TrimQuotes(key);
 
                 // サブオブジェクトの開始位置を検索
                 int subObjectStart = jsonString.IndexOf("{", keyEnd);
@@ -134,11 +132,11 @@ namespace WakeMap
                 }
 
                 // サブオブジェクトの解析
-                Dictionary<string, Dictionary<string, double>> subObject = ParseSubObject(subObjectString);
+                Dictionary<string, Dictionary<string, string>> subObject = ParseDictSDictSS(subObjectString);
 
                 //debug
                 {
-                    Console.WriteLine($"=======ParseDictJSON ParseSubObject 結果=======");
+                    Console.WriteLine($"=======ParseDictSDictSDictSS ParseDictSDictSS 結果=======");
                     foreach (var kvpA in subObject)
                     {
                         Console.WriteLine($"  kvpA.Key = {kvpA.Key}");
@@ -155,7 +153,7 @@ namespace WakeMap
 
                 //debug
                 {
-                    Console.WriteLine($"=======ParseDictJSON result.Add結果=======");
+                    Console.WriteLine($"=======ParseDictSDictSDictSS result.Add結果=======");
                     foreach (var kvpA in result)
                     {
                         Console.WriteLine($"  kvpA.Key = {kvpA.Key}");
@@ -180,9 +178,9 @@ namespace WakeMap
             return result;
         }
 
-        static Dictionary<string, Dictionary<string, double>> ParseSubObject(string subObjectString)
+        static Dictionary<string, Dictionary<string, string>> ParseDictSDictSS(string subObjectString)
         {
-            Dictionary<string, Dictionary<string, double>> result = new Dictionary<string, Dictionary<string, double>>();
+            Dictionary<string, Dictionary<string, string>> result = new Dictionary<string, Dictionary<string, string>>();
 
             // キーと値の組みを検索
             int pos = 0;
@@ -193,7 +191,7 @@ namespace WakeMap
             //debug
             {
                 Console.WriteLine("");
-                Console.WriteLine( "    ======= ParseSubObject 開始 =======");
+                Console.WriteLine( "    ======= ParseDictSDictSS 開始 =======");
                 Console.WriteLine($"    subObjectString =");
                 Console.WriteLine($"    00        10        20        30        40        50        60        70        80        90        100       110       120       130       140       150       160       170       190       200       210       220       230       240       ");
                 Console.WriteLine($"    012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
@@ -222,7 +220,8 @@ namespace WakeMap
                     break;
 
                 // キーを取得
-                string key = subObjectString.Substring(keyStart, keyEnd - (keyStart - 1)).Trim('\"');
+                string key = subObjectString.Substring(keyStart, keyEnd - (keyStart - 1));
+                key = TrimQuotes(key);
 
                 //debug
                 {
@@ -257,7 +256,7 @@ namespace WakeMap
                 }
 
                 // 値の解析
-                Dictionary<string, double> value = ParseValue(valueString);
+                Dictionary<string, string> value = ParseDictSS(valueString);
 
                 // 結果に追加
                 result.Add(key, value);
@@ -271,7 +270,8 @@ namespace WakeMap
             return result;
         }
 
-        static Dictionary<string, double> ParseValue(string valueString)
+        //<string, double>
+        static Dictionary<string, double> ParseDictSD(string valueString)
         {
             Dictionary<string, double> result = new Dictionary<string, double>();
 
@@ -285,7 +285,7 @@ namespace WakeMap
                 string[] keyValue = pair.Split(':');
                 if (keyValue.Length == 2)
                 {
-                    string key = keyValue[0].Trim('\"');
+                    string key = TrimQuotes(keyValue[0]);
                     double value;
                     if (double.TryParse(keyValue[1], out value))
                     {
@@ -294,6 +294,29 @@ namespace WakeMap
                 }
             }
 
+            return result;
+        }
+
+        //<string, string>
+        static Dictionary<string, string> ParseDictSS(string jsonString)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // 不要な文字を削除
+            jsonString = jsonString.Replace("{", "").Replace("}", "");
+
+            // キーと値の組みを検索
+            string[] pairs = jsonString.Split(',');
+            foreach (string pair in pairs)
+            {
+                string[] keyValue = pair.Split(':');
+                if (keyValue.Length == 2)
+                {
+                    string key = TrimQuotes(keyValue[0]);
+                    string value = TrimQuotes(keyValue[1]);
+                    result.Add(key, value);
+                }
+            }
             return result;
         }
 
@@ -315,6 +338,25 @@ namespace WakeMap
             }
 
             return -1;
+        }
+
+        // 文字列の前後にある " または ' を取り除く
+        static string TrimQuotes(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            char firstChar = input[0];
+            char lastChar = input[input.Length - 1];
+
+            if ((firstChar == '"' && lastChar == '"') || (firstChar == '\'' && lastChar == '\''))
+            {
+                return input.Substring(1, input.Length - 2);
+            }
+
+            return input;
         }
     }
 }
