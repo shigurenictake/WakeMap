@@ -75,7 +75,6 @@ namespace WakeMap
         private WakeCongfig g_cfgSelectDTrack = new WakeCongfig();
         private WakeCongfig g_cfgSelectEArrow = new WakeCongfig();
 
-
         //ラベルリスト
         public struct WakeLabel
         {
@@ -557,18 +556,19 @@ namespace WakeMap
             )
         {
             //新しいラベルを生成 
-            WakeLabel wakeLabel = new WakeLabel();
-            wakeLabel.label = new Label();
-            wakeLabel.label.Text = text;
-            wakeLabel.label.AutoSize = true;
-            wakeLabel.label.Location = refUserControlMap.TransPosWorldToImage(worldPos);
-            wakeLabel.label.BackColor = BackColor;
-            wakeLabel.label.ForeColor = ForeColor;
-            wakeLabel.worldPos = worldPos;
-            //リストに追加
-            refListWakeLabel.Add(wakeLabel);
+            Label label = new Label();
+            label.Text = text;
+            label.AutoSize = true;
+            label.Location = refUserControlMap.TransPosWorldToImage(worldPos);
+            label.BackColor = BackColor;
+            label.ForeColor = ForeColor;
             //コントロールに追加
-            refUserControlMap.mapBox.Controls.Add(refListWakeLabel[refListWakeLabel.Count-1].label);
+            refUserControlMap.mapBox.Controls.Add(label);
+            //ラベルと座標の組み合わせをラベルリストに追加
+            WakeLabel wakeLabel = new WakeLabel();
+            wakeLabel.label = label;
+            wakeLabel.worldPos = worldPos;
+            refListWakeLabel.Add(wakeLabel);
         }
 
         // ラベルをmapboxに合わせて再配置
