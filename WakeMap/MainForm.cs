@@ -104,6 +104,8 @@ namespace WakeMap
                     break;
                 case "patternB.html":
                 case "patternB1.html":
+                case "patternB2.html":
+                case "patternB3.html":
                 case "subPatternB.html":
                     TransformB(fimeneme);
                     break;
@@ -197,6 +199,9 @@ namespace WakeMap
             switch (fimeneme)
             {
                 case "patternB.html":
+                case "patternB1.html":
+                case "patternB2.html":
+                case "patternB3.html":
                     csToJs.OperatePatternB();
                     break;
                 default:
