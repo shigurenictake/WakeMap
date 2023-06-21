@@ -42,19 +42,17 @@ namespace WakeMap
         public void InitWake(
             string scene,
             string strDictAWake,
-            string strDictBWake,
-            string strDictCPlace,
             string strDictDTrack,
-            string strDictEArrow
+            string strDictBWake,
+            string strDictCPlace
             )
         {
             refWakeController.InitWake(
                 scene,
                 strDictAWake,
-                strDictBWake,
-                strDictCPlace,
                 strDictDTrack,
-                strDictEArrow
+                strDictBWake,
+                strDictCPlace
                 );
         }
     }
