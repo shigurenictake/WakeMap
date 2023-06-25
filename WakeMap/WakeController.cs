@@ -635,7 +635,7 @@ namespace WakeMap
                                 {
                                     startTime = key.Value["time"];
                                 }
-                                else if (i == (g_dictSelectBWake.Count - 1))
+                                if (i == (g_dictSelectBWake.Count - 1))
                                 {
                                     endTime = key.Value["time"];
                                 }
@@ -671,7 +671,7 @@ namespace WakeMap
                                 {
                                     startTime = key.Value["time"];
                                 }
-                                else if (i == (g_dictSelectCPlace.Count - 1))
+                                if (i == (g_dictSelectCPlace.Count - 1))
                                 {
                                     endTime = key.Value["time"];
                                 }
@@ -693,9 +693,36 @@ namespace WakeMap
                     isHit = SelectArrow(ref g_dictSelectCPlace, ref g_dictCPlace, ref g_cfgSelectCPlace, clickPos);
                     if (isHit)
                     {
+                        //行と時刻範囲を取り出す
+                        int row = -1;
+                        string startTime = null;
+                        string endTime = null;
+                        int i = 0;
+                        foreach (var key in g_dictSelectCPlace)
+                        {
+                            if (key.Key.Contains("info")) //Keyが"info"を含む
+                            {
+                                row = int.Parse(key.Value["row"]);
+                            }
+                            if (key.Key.Contains("pos")) //Keyが"info"を含む
+                            {
+                                if (i == 1)
+                                {
+                                    startTime = key.Value["time"];
+                                }
+                                if (i == (g_dictSelectCPlace.Count - 1))
+                                {
+                                    endTime = key.Value["time"];
+                                }
+                            }
+                            i++;
+                        }
                         //連動でAWakeを選択
+                        TimeLinkSelect(ref g_dictSelectAWake, ref g_dictAWake, ref g_cfgSelectAWake, startTime, endTime);
                         //連動でDTrackを選択
+                        TimeLinkSelectD(ref g_dictSelectDTrack, ref g_dictDTrack, ref g_cfgSelectDTrack, startTime, endTime);
                         //連動でBWakeを選択
+                        TimeLinkSelect(ref g_dictSelectBWake, ref g_dictBWake, ref g_cfgSelectBWake, startTime, endTime);
                         break;
                     }
                     break;
@@ -1135,13 +1162,13 @@ namespace WakeMap
             }
         }
 
-            //時刻で連動選択する
-            private void TimeLinkSelectD(
-            ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictSelectWake,
-            ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictWake,
-            ref WakeCongfig refSelectWakeCongfig,
-            string startTime,
-            string endTime)
+        //時刻で連動選択する
+        private void TimeLinkSelectD(
+        ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictSelectWake,
+        ref Dictionary<string, Dictionary<string, Dictionary<string, string>>> refDictWake,
+        ref WakeCongfig refSelectWakeCongfig,
+        string startTime,
+        string endTime)
         {
             refDictSelectWake = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 
